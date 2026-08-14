@@ -1,6 +1,7 @@
 name: LegacyApp
 options:
   bundleIdPrefix: com.example
+  developmentLanguage: ja
   deploymentTarget:
     iOS: "16.0"
 targets:
@@ -9,6 +10,7 @@ targets:
     platform: iOS
     sources:
       - path: LegacyApp/Sources
+      - path: LegacyApp/Resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.legacyapp
@@ -17,10 +19,12 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: ""
     info:
       path: Generated-Info.plist
       properties:
         CFBundleDisplayName: LegacyApp
+        CFBundleLocalizations: [ja, en]
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
@@ -28,3 +32,12 @@ targets:
             UIWindowSceneSessionRoleApplication:
               - UISceneConfigurationName: Default Configuration
                 UISceneDelegateClassName: SceneDelegate
+schemes:
+  LegacyApp:
+    build:
+      targets:
+        LegacyApp: all
+    run:
+      config: Debug
+    archive:
+      config: Release

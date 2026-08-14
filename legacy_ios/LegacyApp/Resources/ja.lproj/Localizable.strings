@@ -1,0 +1,17 @@
+"tab_memo" = "メモ";
+"tab_music" = "Music";
+
+"label_name" = "名前";
+"label_email" = "メールアドレス";
+"label_message" = "メッセージ";
+"action_next" = "次へ";
+"confirm_title" = "入力内容の確認";
+"action_confirm" = "確定";
+"complete_message" = "送信が完了しました";
+"action_back_to_start" = "最初に戻る";
+"submit_failed" = "送信に失敗しました";
+
+"music_search_hint" = "アーティストや曲名で検索";
+"music_search_button" = "検索";
+"music_no_results" = "検索結果がありません";
+"music_search_error" = "検索に失敗しました";

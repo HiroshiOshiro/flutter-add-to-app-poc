@@ -13,22 +13,28 @@ static NSString *const kSubmitURLString = @"https://jsonplaceholder.typicode.com
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"入力内容の確認";
+    self.navigationItem.title = NSLocalizedString(@"confirm_title", nil);
     self.view.backgroundColor = [UIColor systemBackgroundColor];
 
     FormData *data = BaseViewController.sharedFormData;
 
+    UIImageView *banner = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ProfileBanner"]];
+    banner.contentMode = UIViewContentModeScaleAspectFit;
+    banner.translatesAutoresizingMaskIntoConstraints = NO;
+
     UIStackView *stack = [[UIStackView alloc] initWithArrangedSubviews:@[
-        [self row:@"名前" value:data.name],
-        [self row:@"メールアドレス" value:data.email],
-        [self row:@"メッセージ" value:data.message],
+        banner,
+        [self row:NSLocalizedString(@"label_name", nil) value:data.name],
+        [self row:NSLocalizedString(@"label_email", nil) value:data.email],
+        [self row:NSLocalizedString(@"label_message", nil) value:data.message],
     ]];
     stack.axis = UILayoutConstraintAxisVertical;
     stack.spacing = 20;
+    [stack setCustomSpacing:24 afterView:banner];
     stack.translatesAutoresizingMaskIntoConstraints = NO;
 
     self.confirmButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [self.confirmButton setTitle:@"確定" forState:UIControlStateNormal];
+    [self.confirmButton setTitle:NSLocalizedString(@"action_confirm", nil) forState:UIControlStateNormal];
     [self.confirmButton addTarget:self action:@selector(onConfirmTapped) forControlEvents:UIControlEventTouchUpInside];
     self.confirmButton.translatesAutoresizingMaskIntoConstraints = NO;
     self.confirmButton.accessibilityIdentifier = @"buttonConfirm";
@@ -37,6 +43,9 @@ static NSString *const kSubmitURLString = @"https://jsonplaceholder.typicode.com
     [self.view addSubview:self.confirmButton];
 
     [NSLayoutConstraint activateConstraints:@[
+        [banner.widthAnchor constraintEqualToConstant:96],
+        [banner.heightAnchor constraintEqualToConstant:96],
+
         [stack.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:24],
         [stack.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:24],
         [stack.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-24],
@@ -94,7 +103,7 @@ static NSString *const kSubmitURLString = @"https://jsonplaceholder.typicode.com
                 [strongSelf.navigationController pushViewController:completeVC animated:YES];
             } else {
                 UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
-                                                                                 message:@"送信に失敗しました"
+                                                                                 message:NSLocalizedString(@"submit_failed", nil)
                                                                           preferredStyle:UIAlertControllerStyleAlert];
                 [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
                 [strongSelf presentViewController:alert animated:YES completion:nil];

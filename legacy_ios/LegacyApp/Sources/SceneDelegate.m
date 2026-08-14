@@ -1,5 +1,6 @@
 #import "SceneDelegate.h"
 #import "InputViewController.h"
+#import "MusicViewController.h"
 
 @implementation SceneDelegate
 
@@ -8,8 +9,21 @@
     self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
 
     InputViewController *inputVC = [[InputViewController alloc] init];
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:inputVC];
-    self.window.rootViewController = nav;
+    UINavigationController *memoNav = [[UINavigationController alloc] initWithRootViewController:inputVC];
+
+    MusicViewController *musicVC = [[MusicViewController alloc] init];
+    musicVC.navigationItem.title = NSLocalizedString(@"tab_music", nil);
+    UINavigationController *musicNav = [[UINavigationController alloc] initWithRootViewController:musicVC];
+
+    UITabBarController *tabBarController = [[UITabBarController alloc] init];
+    tabBarController.viewControllers = @[memoNav, musicNav];
+
+    memoNav.tabBarItem.title = NSLocalizedString(@"tab_memo", nil);
+    memoNav.tabBarItem.image = [UIImage systemImageNamed:@"pencil"];
+    musicNav.tabBarItem.title = NSLocalizedString(@"tab_music", nil);
+    musicNav.tabBarItem.image = [UIImage systemImageNamed:@"music.note"];
+
+    self.window.rootViewController = tabBarController;
     [self.window makeKeyAndVisible];
 }
 

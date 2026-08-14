@@ -17,34 +17,56 @@ static NSString *const kPrefsDraftMessage = @"draft_message";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"LegacyApp";
+    // Use navigationItem.title (not self.title) so this doesn't also
+    // overwrite the tab bar item's localized title on the enclosing tab.
+    self.navigationItem.title = @"LegacyApp";
     self.view.backgroundColor = [UIColor systemBackgroundColor];
 
-    self.nameField = [self makeFieldWithPlaceholder:@"名前"];
-    self.emailField = [self makeFieldWithPlaceholder:@"メールアドレス"];
+    UIScrollView *scrollView = [[UIScrollView alloc] init];
+    scrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:scrollView];
+
+    UIImageView *banner = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ProfileBanner"]];
+    banner.contentMode = UIViewContentModeScaleAspectFit;
+    banner.translatesAutoresizingMaskIntoConstraints = NO;
+
+    self.nameField = [self makeFieldWithPlaceholder:NSLocalizedString(@"label_name", nil)];
+    self.emailField = [self makeFieldWithPlaceholder:NSLocalizedString(@"label_email", nil)];
     self.emailField.keyboardType = UIKeyboardTypeEmailAddress;
-    self.messageField = [self makeFieldWithPlaceholder:@"メッセージ"];
+    self.messageField = [self makeFieldWithPlaceholder:NSLocalizedString(@"label_message", nil)];
 
     UIButton *nextButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [nextButton setTitle:@"次へ" forState:UIControlStateNormal];
+    [nextButton setTitle:NSLocalizedString(@"action_next", nil) forState:UIControlStateNormal];
     [nextButton addTarget:self action:@selector(onNextTapped) forControlEvents:UIControlEventTouchUpInside];
     nextButton.accessibilityIdentifier = @"buttonNext";
 
     UIStackView *stack = [[UIStackView alloc] initWithArrangedSubviews:@[
-        [self labeledRow:@"名前" field:self.nameField],
-        [self labeledRow:@"メールアドレス" field:self.emailField],
-        [self labeledRow:@"メッセージ" field:self.messageField],
+        banner,
+        [self labeledRow:NSLocalizedString(@"label_name", nil) field:self.nameField],
+        [self labeledRow:NSLocalizedString(@"label_email", nil) field:self.emailField],
+        [self labeledRow:NSLocalizedString(@"label_message", nil) field:self.messageField],
         nextButton
     ]];
     stack.axis = UILayoutConstraintAxisVertical;
     stack.spacing = 20;
+    [stack setCustomSpacing:24 afterView:banner];
     stack.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:stack];
+    [scrollView addSubview:stack];
 
     [NSLayoutConstraint activateConstraints:@[
-        [stack.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:24],
-        [stack.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:24],
-        [stack.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-24],
+        [scrollView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
+        [scrollView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
+        [scrollView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
+        [scrollView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
+
+        [banner.widthAnchor constraintEqualToConstant:96],
+        [banner.heightAnchor constraintEqualToConstant:96],
+
+        [stack.topAnchor constraintEqualToAnchor:scrollView.topAnchor constant:24],
+        [stack.leadingAnchor constraintEqualToAnchor:scrollView.leadingAnchor constant:24],
+        [stack.trailingAnchor constraintEqualToAnchor:scrollView.trailingAnchor constant:-24],
+        [stack.bottomAnchor constraintEqualToAnchor:scrollView.bottomAnchor constant:-24],
+        [stack.widthAnchor constraintEqualToAnchor:scrollView.widthAnchor constant:-48],
     ]];
 
     [self loadDraft];
