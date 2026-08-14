@@ -4,3 +4,9 @@ build/
 .idea/
 local.properties
 .DS_Store
+
+# iOS
+legacy_ios/build/
+*.xcuserstate
+xcuserdata/
+Generated-Info.plist
