@@ -9,4 +9,3 @@ local.properties
 legacy_ios/build/
 *.xcuserstate
 xcuserdata/
-Generated-Info.plist
