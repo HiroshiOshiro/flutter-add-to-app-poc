@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">LegacyApp</string>
+    <string name="label_name">名前</string>
+    <string name="label_email">メールアドレス</string>
+    <string name="label_message">メッセージ</string>
+    <string name="action_next">次へ</string>
+    <string name="confirm_title">入力内容の確認</string>
+    <string name="action_confirm">確定</string>
+    <string name="complete_message">送信が完了しました</string>
+    <string name="action_back_to_start">最初に戻る</string>
+</resources>
