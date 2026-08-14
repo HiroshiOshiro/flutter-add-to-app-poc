@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">LegacyApp</string>
+
+    <!-- Tabs -->
+    <string name="tab_memo">メモ</string>
+    <string name="tab_music">Music</string>
+
+    <!-- Memo flow -->
     <string name="label_name">名前</string>
     <string name="label_email">メールアドレス</string>
     <string name="label_message">メッセージ</string>
@@ -8,4 +14,11 @@
     <string name="action_confirm">確定</string>
     <string name="complete_message">送信が完了しました</string>
     <string name="action_back_to_start">最初に戻る</string>
+    <string name="submit_failed">送信に失敗しました</string>
+
+    <!-- Music search -->
+    <string name="music_search_hint">アーティストや曲名で検索</string>
+    <string name="music_search_button">検索</string>
+    <string name="music_no_results">検索結果がありません</string>
+    <string name="music_search_error">検索に失敗しました</string>
 </resources>

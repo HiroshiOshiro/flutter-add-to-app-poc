@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">LegacyApp</string>
+
+    <!-- Tabs -->
+    <string name="tab_memo">Memo</string>
+    <string name="tab_music">Music</string>
+
+    <!-- Memo flow -->
+    <string name="label_name">Name</string>
+    <string name="label_email">Email</string>
+    <string name="label_message">Message</string>
+    <string name="action_next">Next</string>
+    <string name="confirm_title">Confirm your details</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="complete_message">Your submission is complete</string>
+    <string name="action_back_to_start">Back to start</string>
+    <string name="submit_failed">Failed to submit</string>
+
+    <!-- Music search -->
+    <string name="music_search_hint">Search by artist or song</string>
+    <string name="music_search_button">Search</string>
+    <string name="music_no_results">No results found</string>
+    <string name="music_search_error">Search failed</string>
+</resources>

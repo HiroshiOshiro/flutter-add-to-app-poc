@@ -14,7 +14,7 @@ public class CompleteActivity extends BaseActivity {
         findViewById(R.id.buttonBackToStart).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CompleteActivity.this, InputActivity.class);
+                Intent intent = new Intent(CompleteActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();

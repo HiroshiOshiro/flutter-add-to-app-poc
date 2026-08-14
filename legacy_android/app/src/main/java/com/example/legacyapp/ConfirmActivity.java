@@ -51,7 +51,7 @@ public class ConfirmActivity extends BaseActivity {
                         if (success) {
                             startActivity(new Intent(ConfirmActivity.this, CompleteActivity.class));
                         } else {
-                            Toast.makeText(ConfirmActivity.this, "送信に失敗しました", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ConfirmActivity.this, R.string.submit_failed, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
