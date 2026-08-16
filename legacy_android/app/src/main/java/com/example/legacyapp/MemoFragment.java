@@ -66,7 +66,7 @@ public class MemoFragment extends Fragment {
             BaseActivity.sFormData.name = nameEdit.getText().toString();
             BaseActivity.sFormData.email = emailEdit.getText().toString();
             BaseActivity.sFormData.message = messageEdit.getText().toString();
-            startActivity(new Intent(requireContext(), ConfirmActivity.class));
+            startActivity(new Intent(requireContext(), ConfirmFlutterActivity.class));
         });
     }
 

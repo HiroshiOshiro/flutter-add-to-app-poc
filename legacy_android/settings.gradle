@@ -6,12 +6,26 @@ pluginManagement {
     }
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    // Flutterのgradleプラグイン(confirm_module/.android/Flutter/build.gradle)が
+    // プロジェクトレベルでリポジトリを追加するため、FAIL_ON_PROJECT_REPOSだと
+    // 「Build was configured to prefer settings repositories...」で失敗する。
+    // PREFER_SETTINGSにして共存させる。
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         google()
         mavenCentral()
+        // Flutterエンジン本体・プラグインのAARはここでのみ配布されている。
+        // PREFER_SETTINGSだとプロジェクト側(Flutter gradleプラグイン)が
+        // 追加するリポジトリは無視されるため、settings側にも明示しておく。
+        maven { url 'https://storage.googleapis.com/download.flutter.io' }
     }
 }
 
 rootProject.name = "LegacyApp"
 include ':app'
+
+setBinding(new Binding([gradle: this]))
+evaluate(new File(
+    settingsDir.parentFile,
+    'confirm_module/.android/include_flutter.groovy'
+))

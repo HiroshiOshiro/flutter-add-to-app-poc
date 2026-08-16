@@ -18,8 +18,11 @@
         </activity>
 
         <activity
-            android:name=".ConfirmActivity"
-            android:exported="false" />
+            android:name=".ConfirmFlutterActivity"
+            android:exported="false"
+            android:theme="@style/FlutterActivityTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".CompleteActivity"

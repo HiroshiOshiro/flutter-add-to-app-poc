@@ -2,4 +2,10 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
     </style>
+
+    <!-- FlutterActivity draws its own AppBar via Scaffold, so it must not
+         also get a native ActionBar (that would show two title bars). -->
+    <style name="FlutterActivityTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+    </style>
 </resources>

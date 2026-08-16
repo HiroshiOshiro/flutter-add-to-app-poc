@@ -40,3 +40,58 @@
   書き換える前提で見ておく必要がある。
 
 ---
+
+## 2. Android統合（confirm_moduleをlegacy_androidへ組み込み）
+
+### 作業内容
+- `settings.gradle` に `confirm_module/.android/include_flutter.groovy` を
+  `evaluate` する形でsourceモジュールとして取り込み、`app/build.gradle` に
+  `implementation project(':flutter')` を追加。
+- `ConfirmFlutterActivity`（`io.flutter.embedding.android.FlutterActivity`
+  のサブクラス）を追加し、`configureFlutterEngine` で
+  `MethodChannel("com.example.legacyapp/confirm")` にハンドラを登録:
+  - `getInitialData` → `BaseActivity.sFormData` の内容をMapで返す
+  - `confirmSubmit` → 別スレッドで旧`ConfirmActivity`にあった
+    `HttpURLConnection`によるPOST処理をそのまま実行し、成否を返す
+  - `goToComplete` → `CompleteActivity` を起動してこの画面を`finish()`
+- `FlutterActivity`はScaffoldで自前のAppBarを描画するため、ネイティブの
+  ActionBarと二重にならないよう `Theme.MaterialComponents.Light.NoActionBar`
+  ベースの専用テーマ(`FlutterActivityTheme`)をManifestで指定。
+- `MemoFragment` の遷移先を `ConfirmActivity` → `ConfirmFlutterActivity` に
+  変更し、旧 `ConfirmActivity.java` / `activity_confirm.xml` を削除。
+
+### 想定外だったこと（重要）
+1. **`dependencyResolutionManagement` の `FAIL_ON_PROJECT_REPOS` と衝突。**
+   `legacy_android/settings.gradle` は最初から
+   `repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)` を設定していたが、
+   Flutter Gradleプラグイン (`confirm_module/.android/Flutter/build.gradle`)
+   がプロジェクトレベルで独自にmavenリポジトリを追加しようとするため、
+   ```
+   Build was configured to prefer settings repositories over project repositories
+   but repository 'maven' was added by plugin 'dev.flutter.flutter-gradle-plugin'
+   ```
+   で即失敗した。`RepositoriesMode.PREFER_SETTINGS` に緩和して解決。
+2. **リポジトリを緩和しただけではFlutterエンジン本体が見つからない。**
+   `PREFER_SETTINGS`にすると、プロジェクト側が独自にリポジトリを宣言している
+   場合はそちらを無視してsettings側のリポジトリのみで解決しようとする挙動に
+   なるため、`google()`/`mavenCentral()`だけでは
+   `io.flutter:flutter_embedding_debug` 等のFlutterエンジンAARが見つからず
+   `Could not resolve...` で失敗した。Flutterエンジンの配布元
+   `https://storage.googleapis.com/download.flutter.io` を
+   `settings.gradle` の `dependencyResolutionManagement.repositories` に
+   明示的に追加して解決。
+   → **教訓**: 「集中管理リポジトリ (`dependencyResolutionManagement`) を
+   厳格運用しているAndroidプロジェクトにadd-to-appでFlutterモジュールを
+   足す場合、settings.gradle側にFlutterのmavenリポジトリを明示追加する
+   必要がある」ことは公式ドキュメントには明記されておらず、素朴に
+   `include_flutter.groovy` を読み込むだけでは失敗する。
+
+### 起動確認
+- `./gradlew assembleDebug` が成功することを確認。
+- エミュレータで実際に Input(ネイティブ) → 次へ → Confirm(**Flutter**) →
+  Confirm(**ネイティブHTTP送信**) → Complete(ネイティブ) という一連の流れを
+  操作して確認。Flutter画面にネイティブ入力値(`getInitialData`)が正しく
+  渡り、送信後は自動でネイティブのComplete画面に遷移することを確認した。
+  ActionBarの二重表示も発生していない。
+
+---
