@@ -1,0 +1,98 @@
+# GitLab CI/CD pipeline definition
+#
+# 対象GitLabバージョン: 11.3.4 (2018-09-22 リリース) を想定。
+# このバージョンでは以下のキーワードがまだ存在しないため使用していない:
+#   - rules / workflow          (12.3 / 12.5 で追加)
+#   - include                   (11.4 で追加)
+#   - needs                     (12.2 で追加)
+#   - artifacts:reports:junit   (11.5 で追加)
+#   - retry                     (11.5 で追加)
+#   - only: [merge_requests] のようなMRパイプライン専用キーワード (11.6 で追加)
+# ジョブ間の共通設定は、GitLab独自のextendsではなくYAML標準のアンカー
+# （バージョンに依存しない）で使い回す。
+
+stages:
+  - test
+  - build
+
+variables:
+  # confirm_module/.metadata に記録されているFlutter SDKバージョンと
+  # 一致させること（ずれるとネイティブ側のsource module統合がビルドできない）。
+  FLUTTER_VERSION: "3.41.2"
+  PUB_CACHE: "${CI_PROJECT_DIR}/.pub-cache"
+
+.flutter_pub_cache: &flutter_pub_cache
+  key: flutter-pub-cache
+  paths:
+    - .pub-cache/
+
+# -----------------------------------------------------------------------
+# test stage
+# -----------------------------------------------------------------------
+
+flutter:test:
+  stage: test
+  # Android SDK同梱のFlutterイメージ。android:build と揃えることで、
+  # 同じイメージでFlutterのバージョン差異が起きないようにする。
+  image: cirrusci/flutter:${FLUTTER_VERSION}
+  cache:
+    <<: *flutter_pub_cache
+  before_script:
+    - cd confirm_module
+    - flutter pub get
+  script:
+    - flutter analyze
+    - flutter test
+  only:
+    - branches
+  except:
+    - tags
+
+# -----------------------------------------------------------------------
+# build stage
+# -----------------------------------------------------------------------
+
+android:build:
+  stage: build
+  # legacy_android は confirm_module を source module として組み込んでいる
+  # (docs/MIGRATION_GUIDE.md の「source module か AAR か」参照) ため、
+  # ホスト側のビルドにもFlutter SDKが必要。Android SDK同梱のFlutterイメージを使う。
+  image: cirrusci/flutter:${FLUTTER_VERSION}
+  cache:
+    <<: *flutter_pub_cache
+  before_script:
+    - cd legacy_android
+    - chmod +x ./gradlew
+  script:
+    - ./gradlew assembleDebug
+  artifacts:
+    paths:
+      - legacy_android/app/build/outputs/apk/debug/*.apk
+    expire_in: 1 week
+  only:
+    - master
+  dependencies: []
+
+ios:build:
+  stage: build
+  # iOSビルドはmacOS + Xcodeが必須で、Dockerのimageキーワードは使えない。
+  # macOSのshell executorを持つRunnerに、tagsでジョブを振り分ける前提。
+  tags:
+    - macos
+    - xcode
+  before_script:
+    - cd legacy_ios
+    - gem install xcodegen --no-document || true
+    - xcodegen generate
+    - pod install
+  script:
+    - >
+      xcodebuild
+      -workspace LegacyApp.xcworkspace
+      -scheme LegacyApp
+      -sdk iphonesimulator
+      -configuration Debug
+      build
+  only:
+    - master
+  dependencies: []
