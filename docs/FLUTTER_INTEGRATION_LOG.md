@@ -95,3 +95,73 @@
   ActionBarの二重表示も発生していない。
 
 ---
+
+## 3. iOS統合（confirm_moduleをlegacy_iosへ組み込み）
+
+### 作業内容
+- `legacy_ios/Podfile` を作成し、`confirm_module/.ios/Flutter/podhelper.rb` を
+  `load` して `install_all_flutter_pods` で組み込み。`pod install` で
+  `LegacyApp.xcworkspace` を生成。
+- `ConfirmFlutterViewController`（`FlutterViewController` のサブクラス）を
+  追加し、`FlutterMethodChannel("com.example.legacyapp/confirm")` に
+  `getInitialData` / `confirmSubmit` / `goToComplete` のハンドラを実装
+  (Android版のConfirmFlutterActivityと対称的な設計)。
+- `InputViewController` の遷移先を `ConfirmViewController`(ネイティブ) →
+  `ConfirmFlutterViewController` に変更し、旧 `ConfirmViewController.h/.m`
+  を削除。
+
+### 想定外だったこと（重要、3段階でハマった）
+1. **`pod install` がPodfileの記法不足でエラー。**
+   `install_all_flutter_pods` だけでは
+   `Missing flutter_post_install(installer) in Podfile post_install block`
+   でエラーになった。`post_install do |installer| flutter_post_install(installer) end`
+   をPodfileに追記して解決。公式のPodfileサンプルをそのまま貼るだけでは
+   足りず、`podhelper.rb` が要求するpost_installフックの追加が別途必要。
+2. **`xcodegen generate` を再実行するとCocoaPods統合が消える。**
+   新規ソースファイル追加のために `xcodegen generate` で `.xcodeproj` を
+   再生成すると、CocoaPodsが `project.pbxproj` に注入した設定
+   (Pods統合のビルドフェーズ等)が失われ、`pod install` をやり直すまで
+   ビルドが壊れる。**「project.ymlやソース構成を変更する → `xcodegen generate`
+   → `pod install` → ビルド」の順序を毎回徹底する必要がある。**
+   xcodegenのみでプロジェクトを管理していたAndroid/iOS双方の運用に、
+   CocoaPods導入後は一手間増える。
+3. **`FlutterEngine` を「アプリ起動時に1回だけrunして使い回す」設計にしたら
+   Confirm画面が永久にローディングのまま止まった。**
+   Dartの`main()`（＝`ConfirmScreen.initState()`内の`getInitialData`呼び出し）は
+   エンジンの生存期間中に**一度しか実行されない**。アプリ起動時にエンジンを
+   runすると、そのタイミングではまだ`MethodChannel`のハンドラを登録して
+   いない（ユーザーがまだConfirm画面を開いていないため）ので、
+   `getInitialData`が永久に解決されないまま`ConfirmScreen`が
+   ローディング状態に固まった。
+   - 1回目の対処(ハンドラをrunの前に登録)は
+     `-[FlutterEngine setMessageHandlerOnChannel:...]`が
+     `FlutterBinaryMessengerRelay`内で `EXC_CRASH`(NSException)を起こした
+     （エンジンがrunされる前は`engine.binaryMessenger`経由のハンドラ登録が
+     使えない）。
+   - 2回目の対処(`initWithEngine:`を先に呼ぶ)は、エンジンがrunされる前に
+     プラットフォームビューへアタッチしようとして
+     `EXC_BAD_ACCESS`(SIGSEGV)でクラッシュした。
+   - **最終的な解決策**: 「アプリ全体で1つの温存エンジンを使い回す」設計を
+     やめ、**Confirm画面を開くたびに新しい`FlutterEngine`を生成してrunする**
+     方式に変更。`run()` → `initWithEngine:`(ここでアタッチ、runは済んでいる
+     ので安全) → `MethodChannel`のハンドラ登録、という順序を守れば
+     クラッシュもハングも起きない。Dartの初回フレーム(および
+     `getInitialData`呼び出し)は、ビュー実体がロードされる少し後の
+     タイミングで発生するため、`init`内の同期処理が先に完了していれば
+     間に合う。
+   - トレードオフとして毎回エンジンを起動し直すため、温存エンジンに比べて
+     起動が数百ms程度遅くなる。本番アプリで温存エンジンの高速起動を
+     活かしたい場合は、`initState`で即座にデータ取得する設計ではなく、
+     ネイティブ側から明示的にデータをpushする(あるいは`initialRoute`/
+     エンジン再利用時の再初期化フックを使う)設計に変更する必要がある。
+
+### 起動確認
+- `xcodebuild -workspace LegacyApp.xcworkspace -scheme LegacyApp ...` が
+  成功することを確認。
+- シミュレータで実際に Input(ネイティブ) → 次へ → Confirm(**Flutter**) →
+  Confirm(**ネイティブNSURLSession送信**) → Complete(ネイティブ) という
+  一連の流れを操作して確認。Flutter画面にネイティブ入力値
+  (`getInitialData`)が正しく渡り、送信後は自動でネイティブのComplete画面に
+  遷移することを確認した。
+
+---

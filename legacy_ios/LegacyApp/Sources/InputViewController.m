@@ -1,5 +1,5 @@
 #import "InputViewController.h"
-#import "ConfirmViewController.h"
+#import "ConfirmFlutterViewController.h"
 
 static NSString *const kPrefsDraftName = @"draft_name";
 static NSString *const kPrefsDraftEmail = @"draft_email";
@@ -130,7 +130,7 @@ static NSString *const kPrefsDraftMessage = @"draft_message";
     data.email = self.emailField.text ?: @"";
     data.message = self.messageField.text ?: @"";
 
-    ConfirmViewController *confirmVC = [[ConfirmViewController alloc] init];
+    ConfirmFlutterViewController *confirmVC = [[ConfirmFlutterViewController alloc] init];
     [self.navigationController pushViewController:confirmVC animated:YES];
 }
 

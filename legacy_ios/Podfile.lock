@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - FlutterPluginRegistrant (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `../confirm_module/.ios/Flutter`)
+  - FlutterPluginRegistrant (from `../confirm_module/.ios/Flutter/FlutterPluginRegistrant`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: "../confirm_module/.ios/Flutter"
+  FlutterPluginRegistrant:
+    :path: "../confirm_module/.ios/Flutter/FlutterPluginRegistrant"
+
+SPEC CHECKSUMS:
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  FlutterPluginRegistrant: 1bf2b93dcc6a731089dfe77f7a867be153c5008f
+
+PODFILE CHECKSUM: 62f97a310c2ee4b64d049faa30c186331378a358
+
+COCOAPODS: 1.17.0
