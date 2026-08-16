@@ -12,6 +12,8 @@
 		249EFC3735BB1FD618F4D9E3 /* ConfirmViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BC58799B13AE5139571F7DB /* ConfirmViewController.m */; };
 		3348C475BB51B843F1070287 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F80F83393C68709E87143A2 /* Assets.xcassets */; };
 		3B43E73240E57BC4A503FA4B /* MusicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34E440BA2146EDDB8F57CE43 /* MusicViewController.m */; };
+		3CB566626EF3E9D24751DEFA /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A3E9D5301E589408797E65C5 /* libsqlite3.tbd */; };
+		3D3FF094F594DAFB52674EC4 /* FavoritesDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = CB52D3F228D7A62F936F2912 /* FavoritesDatabase.m */; };
 		3E789D5B26553A9A87D9F810 /* FavoritesStore.m in Sources */ = {isa = PBXBuildFile; fileRef = BE274618D2AB783AEBC78A57 /* FavoritesStore.m */; };
 		425F59F025702BDEEB667273 /* InputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56216691207C58856ED27C3E /* InputViewController.m */; };
 		513E617B58E5B5527B636A17 /* TrackTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 408FE583B6B2AA4BE5C98F22 /* TrackTableViewCell.m */; };
@@ -36,6 +38,7 @@
 		4EC0277E2914560FF11F1DFC /* CompleteViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CompleteViewController.m; sourceTree = "<group>"; };
 		50448BA1D9D163FF25E44FA3 /* LegacyApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LegacyApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		56216691207C58856ED27C3E /* InputViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InputViewController.m; sourceTree = "<group>"; };
+		620D3074E2E451E18CF33D85 /* FavoritesDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FavoritesDatabase.h; sourceTree = "<group>"; };
 		6ABF887357E8D8191D6E0724 /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
 		6E0E2E42163B199F88424D9D /* FavoritesStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FavoritesStore.h; sourceTree = "<group>"; };
 		7BC58799B13AE5139571F7DB /* ConfirmViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConfirmViewController.m; sourceTree = "<group>"; };
@@ -45,12 +48,14 @@
 		8B92C46A95C4373FE8FAC083 /* TrackTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackTableViewCell.h; sourceTree = "<group>"; };
 		8F80F83393C68709E87143A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A318F6D5545667050491A296 /* ArtworkLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArtworkLoader.h; sourceTree = "<group>"; };
+		A3E9D5301E589408797E65C5 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		B2C5832CEB3BB8509EA87419 /* ArtworkLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArtworkLoader.m; sourceTree = "<group>"; };
 		B3C6C794B847079E077AC6D1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		BE274618D2AB783AEBC78A57 /* FavoritesStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FavoritesStore.m; sourceTree = "<group>"; };
 		C0C6D33A39EEA86789ACAEBE /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
 		C46FD178B60B32E803BCDEC1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		C9D7C187CFD933BFA4DF71E0 /* ItunesTrack.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ItunesTrack.m; sourceTree = "<group>"; };
+		CB52D3F228D7A62F936F2912 /* FavoritesDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FavoritesDatabase.m; sourceTree = "<group>"; };
 		DE2119771A66A1DAA478E411 /* BaseViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseViewController.h; sourceTree = "<group>"; };
 		E7A2FEBFBEEB2A64BD26C82D /* MusicViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MusicViewController.h; sourceTree = "<group>"; };
 		EA8167F69382C1674BE75AD5 /* CompleteViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompleteViewController.h; sourceTree = "<group>"; };
@@ -58,6 +63,17 @@
 		F173B41FDF18376D8B24F0C3 /* ItunesTrack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ItunesTrack.h; sourceTree = "<group>"; };
 		F746365D6D51B232F67CE029 /* TrackDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackDetailViewController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		94079FE719FD805B820A3796 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3CB566626EF3E9D24751DEFA /* libsqlite3.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		21C1B94BA0F700BAB338310F /* Sources */ = {
@@ -73,6 +89,8 @@
 				4EC0277E2914560FF11F1DFC /* CompleteViewController.m */,
 				1C170EAAA05C265529D4DCEC /* ConfirmViewController.h */,
 				7BC58799B13AE5139571F7DB /* ConfirmViewController.m */,
+				620D3074E2E451E18CF33D85 /* FavoritesDatabase.h */,
+				CB52D3F228D7A62F936F2912 /* FavoritesDatabase.m */,
 				6E0E2E42163B199F88424D9D /* FavoritesStore.h */,
 				BE274618D2AB783AEBC78A57 /* FavoritesStore.m */,
 				83D512E47E347C6E8601F4B4 /* FormData.h */,
@@ -95,6 +113,14 @@
 			path = LegacyApp/Sources;
 			sourceTree = "<group>";
 		};
+		40E2C0BD5A0070B94CD5A46C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A3E9D5301E589408797E65C5 /* libsqlite3.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7708B1989666813A10C9D224 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -110,6 +136,7 @@
 			children = (
 				7708B1989666813A10C9D224 /* Resources */,
 				21C1B94BA0F700BAB338310F /* Sources */,
+				40E2C0BD5A0070B94CD5A46C /* Frameworks */,
 				DC721021C97543D5DC94D0E1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -131,6 +158,7 @@
 			buildPhases = (
 				27209C1A69CC003B2C583B45 /* Sources */,
 				6A864511787BC449FA698FF1 /* Resources */,
+				94079FE719FD805B820A3796 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -196,6 +224,7 @@
 				108C755D7DC8BB570ACEDBD6 /* BaseViewController.m in Sources */,
 				04EB9F6D3720709A03933ADC /* CompleteViewController.m in Sources */,
 				249EFC3735BB1FD618F4D9E3 /* ConfirmViewController.m in Sources */,
+				3D3FF094F594DAFB52674EC4 /* FavoritesDatabase.m in Sources */,
 				3E789D5B26553A9A87D9F810 /* FavoritesStore.m in Sources */,
 				59B784FDBD0B5514721D9EF9 /* FormData.m in Sources */,
 				425F59F025702BDEEB667273 /* InputViewController.m in Sources */,
