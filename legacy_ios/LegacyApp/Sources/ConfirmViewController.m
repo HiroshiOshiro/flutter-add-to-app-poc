@@ -18,11 +18,17 @@ static NSString *const kSubmitURLString = @"https://jsonplaceholder.typicode.com
 
     FormData *data = BaseViewController.sharedFormData;
 
+    UILabel *greetingLabel = [[UILabel alloc] init];
+    greetingLabel.text = NSLocalizedString(@"greeting", nil);
+    greetingLabel.font = [UIFont boldSystemFontOfSize:20];
+    greetingLabel.textAlignment = NSTextAlignmentCenter;
+
     UIImageView *banner = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ProfileBanner"]];
     banner.contentMode = UIViewContentModeScaleAspectFit;
     banner.translatesAutoresizingMaskIntoConstraints = NO;
 
     UIStackView *stack = [[UIStackView alloc] initWithArrangedSubviews:@[
+        greetingLabel,
         banner,
         [self row:NSLocalizedString(@"label_name", nil) value:data.name],
         [self row:NSLocalizedString(@"label_email", nil) value:data.email],
@@ -30,6 +36,7 @@ static NSString *const kSubmitURLString = @"https://jsonplaceholder.typicode.com
     ]];
     stack.axis = UILayoutConstraintAxisVertical;
     stack.spacing = 20;
+    [stack setCustomSpacing:16 afterView:greetingLabel];
     [stack setCustomSpacing:24 afterView:banner];
     stack.translatesAutoresizingMaskIntoConstraints = NO;
 

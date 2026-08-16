@@ -8,6 +8,12 @@
     self.view.backgroundColor = [UIColor systemBackgroundColor];
     self.navigationItem.hidesBackButton = YES;
 
+    UILabel *greetingLabel = [[UILabel alloc] init];
+    greetingLabel.text = NSLocalizedString(@"greeting", nil);
+    greetingLabel.font = [UIFont boldSystemFontOfSize:20];
+    greetingLabel.textAlignment = NSTextAlignmentCenter;
+    greetingLabel.translatesAutoresizingMaskIntoConstraints = NO;
+
     UIImageView *banner = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ProfileBanner"]];
     banner.contentMode = UIViewContentModeScaleAspectFit;
     banner.translatesAutoresizingMaskIntoConstraints = NO;
@@ -23,12 +29,16 @@
     backButton.translatesAutoresizingMaskIntoConstraints = NO;
     backButton.accessibilityIdentifier = @"buttonBackToStart";
 
+    [self.view addSubview:greetingLabel];
     [self.view addSubview:banner];
     [self.view addSubview:messageLabel];
     [self.view addSubview:backButton];
 
     [NSLayoutConstraint activateConstraints:@[
-        [banner.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:24],
+        [greetingLabel.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:24],
+        [greetingLabel.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
+
+        [banner.topAnchor constraintEqualToAnchor:greetingLabel.bottomAnchor constant:16],
         [banner.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
         [banner.widthAnchor constraintEqualToConstant:96],
         [banner.heightAnchor constraintEqualToConstant:96],

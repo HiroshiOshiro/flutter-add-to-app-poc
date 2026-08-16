@@ -1,6 +1,7 @@
 "tab_memo" = "Memo";
 "tab_music" = "Music";
 
+"greeting" = "Hello!";
 "label_name" = "Name";
 "label_email" = "Email";
 "label_message" = "Message";
@@ -15,3 +16,9 @@
 "music_search_button" = "Search";
 "music_no_results" = "No results found";
 "music_search_error" = "Search failed";
+
+"detail_title" = "Track details";
+"label_album" = "Album";
+"label_genre" = "Genre";
+"action_add_favorite" = "Add to favorites";
+"action_remove_favorite" = "Remove from favorites";

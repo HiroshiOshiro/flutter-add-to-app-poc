@@ -26,6 +26,11 @@ static NSString *const kPrefsDraftMessage = @"draft_message";
     scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:scrollView];
 
+    UILabel *greetingLabel = [[UILabel alloc] init];
+    greetingLabel.text = NSLocalizedString(@"greeting", nil);
+    greetingLabel.font = [UIFont boldSystemFontOfSize:20];
+    greetingLabel.textAlignment = NSTextAlignmentCenter;
+
     UIImageView *banner = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ProfileBanner"]];
     banner.contentMode = UIViewContentModeScaleAspectFit;
     banner.translatesAutoresizingMaskIntoConstraints = NO;
@@ -41,6 +46,7 @@ static NSString *const kPrefsDraftMessage = @"draft_message";
     nextButton.accessibilityIdentifier = @"buttonNext";
 
     UIStackView *stack = [[UIStackView alloc] initWithArrangedSubviews:@[
+        greetingLabel,
         banner,
         [self labeledRow:NSLocalizedString(@"label_name", nil) field:self.nameField],
         [self labeledRow:NSLocalizedString(@"label_email", nil) field:self.emailField],
@@ -49,6 +55,7 @@ static NSString *const kPrefsDraftMessage = @"draft_message";
     ]];
     stack.axis = UILayoutConstraintAxisVertical;
     stack.spacing = 20;
+    [stack setCustomSpacing:16 afterView:greetingLabel];
     [stack setCustomSpacing:24 afterView:banner];
     stack.translatesAutoresizingMaskIntoConstraints = NO;
     [scrollView addSubview:stack];

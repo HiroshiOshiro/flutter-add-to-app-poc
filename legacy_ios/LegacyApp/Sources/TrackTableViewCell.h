@@ -5,6 +5,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface TrackTableViewCell : UITableViewCell
 
+@property (nonatomic, copy, nullable) void (^onFavoriteToggled)(void);
+
 - (void)configureWithTrack:(ItunesTrack *)track;
 
 @end

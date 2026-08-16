@@ -1,6 +1,7 @@
 #import "MusicViewController.h"
 #import "ItunesTrack.h"
 #import "TrackTableViewCell.h"
+#import "TrackDetailViewController.h"
 
 static NSString *const kSearchURLString = @"https://itunes.apple.com/search";
 static NSString *const kCellReuseId = @"TrackCell";
@@ -72,6 +73,13 @@ static NSString *const kCellReuseId = @"TrackCell";
     ]];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    // Favorite state may have changed on the detail screen; refresh the
+    // star icons now that this list is visible again.
+    [self.tableView reloadData];
+}
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [self onSearchTapped];
     return YES;
@@ -133,9 +141,13 @@ static NSString *const kCellReuseId = @"TrackCell";
     NSMutableArray<ItunesTrack *> *tracks = [NSMutableArray array];
     for (NSDictionary *item in results) {
         ItunesTrack *track = [[ItunesTrack alloc] init];
+        track.trackId = [item[@"trackId"] integerValue];
         track.trackName = item[@"trackName"] ?: @"";
         track.artistName = item[@"artistName"] ?: @"";
+        track.collectionName = item[@"collectionName"] ?: @"";
+        track.primaryGenreName = item[@"primaryGenreName"] ?: @"";
         track.artworkUrl = item[@"artworkUrl60"] ?: @"";
+        track.artworkUrlLarge = item[@"artworkUrl100"] ?: @"";
         [tracks addObject:track];
     }
     return tracks;
@@ -155,6 +167,9 @@ static NSString *const kCellReuseId = @"TrackCell";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    ItunesTrack *track = self.tracks[indexPath.row];
+    TrackDetailViewController *detailVC = [[TrackDetailViewController alloc] initWithTrack:track];
+    [self.navigationController pushViewController:detailVC animated:YES];
 }
 
 @end

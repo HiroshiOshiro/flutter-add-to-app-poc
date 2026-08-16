@@ -1,6 +1,7 @@
 "tab_memo" = "メモ";
 "tab_music" = "Music";
 
+"greeting" = "こんにちは!";
 "label_name" = "名前";
 "label_email" = "メールアドレス";
 "label_message" = "メッセージ";
@@ -15,3 +16,9 @@
 "music_search_button" = "検索";
 "music_no_results" = "検索結果がありません";
 "music_search_error" = "検索に失敗しました";
+
+"detail_title" = "曲の詳細";
+"label_album" = "アルバム";
+"label_genre" = "ジャンル";
+"action_add_favorite" = "お気に入りに追加";
+"action_remove_favorite" = "お気に入りを解除";
