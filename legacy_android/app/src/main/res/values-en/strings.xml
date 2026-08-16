@@ -6,6 +6,7 @@
     <string name="tab_music">Music</string>
 
     <!-- Memo flow -->
+    <string name="greeting">Hello!</string>
     <string name="label_name">Name</string>
     <string name="label_email">Email</string>
     <string name="label_message">Message</string>
@@ -21,4 +22,11 @@
     <string name="music_search_button">Search</string>
     <string name="music_no_results">No results found</string>
     <string name="music_search_error">Search failed</string>
+
+    <!-- Music detail -->
+    <string name="detail_title">Track details</string>
+    <string name="label_album">Album</string>
+    <string name="label_genre">Genre</string>
+    <string name="action_add_favorite">Add to favorites</string>
+    <string name="action_remove_favorite">Remove from favorites</string>
 </resources>

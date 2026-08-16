@@ -9,6 +9,15 @@
         android:orientation="vertical"
         android:padding="24dp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:text="@string/greeting" />
+
         <ImageView
             android:id="@+id/imageBanner"
             android:layout_width="96dp"

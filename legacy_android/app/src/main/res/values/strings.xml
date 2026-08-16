@@ -6,6 +6,7 @@
     <string name="tab_music">Music</string>
 
     <!-- Memo flow -->
+    <string name="greeting">こんにちは!</string>
     <string name="label_name">名前</string>
     <string name="label_email">メールアドレス</string>
     <string name="label_message">メッセージ</string>
@@ -21,4 +22,11 @@
     <string name="music_search_button">検索</string>
     <string name="music_no_results">検索結果がありません</string>
     <string name="music_search_error">検索に失敗しました</string>
+
+    <!-- Music detail -->
+    <string name="detail_title">曲の詳細</string>
+    <string name="label_album">アルバム</string>
+    <string name="label_genre">ジャンル</string>
+    <string name="action_add_favorite">お気に入りに追加</string>
+    <string name="action_remove_favorite">お気に入りを解除</string>
 </resources>

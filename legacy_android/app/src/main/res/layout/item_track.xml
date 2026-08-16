@@ -39,4 +39,12 @@
 
     </LinearLayout>
 
+    <ImageButton
+        android:id="@+id/buttonFavorite"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_favorite_outline" />
+
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.example.legacyapp;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -53,7 +54,16 @@ public class MusicFragment extends Fragment {
         emptyState = view.findViewById(R.id.textEmptyState);
         RecyclerView recyclerView = view.findViewById(R.id.recyclerResults);
 
-        adapter = new TrackAdapter();
+        adapter = new TrackAdapter(track -> {
+            Intent intent = new Intent(requireContext(), TrackDetailActivity.class);
+            intent.putExtra(TrackDetailActivity.EXTRA_TRACK_ID, track.trackId);
+            intent.putExtra(TrackDetailActivity.EXTRA_TRACK_NAME, track.trackName);
+            intent.putExtra(TrackDetailActivity.EXTRA_ARTIST_NAME, track.artistName);
+            intent.putExtra(TrackDetailActivity.EXTRA_COLLECTION_NAME, track.collectionName);
+            intent.putExtra(TrackDetailActivity.EXTRA_GENRE_NAME, track.primaryGenreName);
+            intent.putExtra(TrackDetailActivity.EXTRA_ARTWORK_URL, track.artworkUrlLarge);
+            startActivity(intent);
+        });
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
 
@@ -65,6 +75,16 @@ public class MusicFragment extends Fragment {
             }
             return false;
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Favorite state may have changed on the detail screen; refresh the
+        // star icons now that this list is visible again.
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     private void performSearch() {
@@ -124,9 +144,13 @@ public class MusicFragment extends Fragment {
             for (int i = 0; i < results.length(); i++) {
                 JSONObject item = results.getJSONObject(i);
                 ItunesTrack track = new ItunesTrack();
+                track.trackId = item.optLong("trackId");
                 track.trackName = item.optString("trackName", "");
                 track.artistName = item.optString("artistName", "");
+                track.collectionName = item.optString("collectionName", "");
+                track.primaryGenreName = item.optString("primaryGenreName", "");
                 track.artworkUrl = item.optString("artworkUrl60", "");
+                track.artworkUrlLarge = item.optString("artworkUrl100", "");
                 tracks.add(track);
             }
             return tracks;
