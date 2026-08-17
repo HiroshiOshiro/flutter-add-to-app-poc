@@ -1,5 +1,5 @@
 #import "InputViewController.h"
-#import "ConfirmFlutterViewController.h"
+#import "LegacyApp-Swift.h"
 
 static NSString *const kPrefsDraftName = @"draft_name";
 static NSString *const kPrefsDraftEmail = @"draft_email";

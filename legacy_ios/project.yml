@@ -22,6 +22,11 @@ targets:
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: ""
+        # Flutter統合の新規コード(ConfirmFlutterViewController)はSwiftで
+        # 書いているため、既存のObjective-Cコードとの相互運用に必要な設定。
+        SWIFT_VERSION: "5.0"
+        SWIFT_OBJC_BRIDGING_HEADER: LegacyApp/Sources/LegacyApp-Bridging-Header.h
+        ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES: YES
     info:
       path: Generated-Info.plist
       properties:

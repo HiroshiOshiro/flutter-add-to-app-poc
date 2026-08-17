@@ -166,6 +166,97 @@
 
 ---
 
+## 4. レイヤードアーキテクチャ化とKotlin/Swiftへの移行
+
+1〜3節の初期統合が完了した後、「Flutter導入のためのネイティブ側の新規コード
+はSwift/Kotlinを使う」「処理はできる限りFlutterに寄せる（共通化する）。
+その際はレイヤードアーキテクチャを使う」という方針転換を受けて実施した
+作業の記録。
+
+### 作業内容
+- **`confirm_module`をレイヤードアーキテクチャ(presentation/domain/data)に
+  再構成。** `lib/main.dart`に集中していたUI・状態管理・MethodChannel呼び出しを
+  以下に分割:
+  - `domain/`: `ConfirmFormData`(エンティティ)、`ConfirmRepository`/
+    `ConfirmNavigator`(抽象インターフェース)、各種UseCase
+  - `data/`: `ConfirmNativeDataSource`(MethodChannelラッパー、
+    `getInitialData`/`goToComplete`のみ)、`ConfirmRemoteDataSource`
+    (`http`パッケージによるPOST)、上記2つを合成する`ConfirmRepositoryImpl`/
+    `ConfirmNavigatorImpl`
+  - `presentation/`: `ConfirmScreen`(UseCaseだけに依存し、実装がネイティブ
+    委譲かDart単体かを意識しない)
+- **確認内容の送信(POST)処理をネイティブからFlutter(`ConfirmRemoteDataSource`)
+  に移動。** これに伴い`MethodChannel`のメソッドは`confirmSubmit`が不要になり、
+  `getInitialData`/`goToComplete`の2つに縮小した。
+- **テストもレイヤーごとに再構成。** `presentation`層はMethodChannelを
+  モックせずfakeなRepository/Navigatorを注入して検証、`data`層は
+  `ConfirmNativeDataSource`(MethodChannelモック)と`ConfirmRemoteDataSource`
+  (`http/testing.dart`の`MockClient`)をそれぞれ単体でテストする構成にした。
+- **Android: `ConfirmFlutterActivity`をJavaからKotlinに書き直し。**
+  `confirmSubmit`とその実装だった`HttpURLConnection`によるPOST処理を削除し、
+  `getInitialData`/`goToComplete`のみを実装。`app/build.gradle`に
+  `kotlin-android`プラグインとKotlin標準ライブラリを追加。
+- **iOS: `ConfirmFlutterViewController`をObjective-CからSwiftに書き直し。**
+  同様に`confirmSubmit`とその実装だった`NSURLSession`によるPOST処理を削除。
+  Swift/Objective-C相互運用のため、`LegacyApp-Bridging-Header.h`
+  (`BaseViewController.h`/`CompleteViewController.h`をimport)を追加し、
+  `project.yml`に`SWIFT_VERSION`/`SWIFT_OBJC_BRIDGING_HEADER`/
+  `ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES`を設定。既存の
+  `InputViewController.m`側は、Swiftクラスを参照するため
+  `#import "ConfirmFlutterViewController.h"`を自動生成される
+  `#import "LegacyApp-Swift.h"`に変更。
+
+### 想定外だったこと
+1. **KotlinとJavaでJVMターゲットが食い違いビルド失敗。**
+   `app/build.gradle`の`compileOptions`は`JavaVersion.VERSION_1_8`のままだが、
+   Kotlinプラグインのデフォルトターゲットは(使用したKotlin 2.0系では)より
+   新しいJVMを指すため、
+   `Inconsistent JVM-target compatibility detected for tasks
+   'compileDebugJavaWithJavac' (1.8) and 'compileDebugKotlin' (21)`
+   で失敗した。`android { kotlinOptions { jvmTarget = "1.8" } }`を追加して
+   Javaと揃えて解決。JavaとKotlinが混在するモジュールにKotlinを後から
+   足す場合、素朴にプラグインを足すだけではターゲットJVMが揃わずビルドが
+   壊れることがある。
+2. **SwiftのDesignated Initializerオーバーライドでコンパイルエラー。**
+   `FlutterViewController`の`initWithCoder:`はObjective-C側で
+   非failable(`NS_DESIGNATED_INITIALIZER`、常に非nil)に定義されているため、
+   Swift側で`required init?(coder:)`(failable)としてオーバーライドすると
+   `failable initializer 'init(coder:)' cannot override a non-failable
+   initializer`でコンパイルエラーになった。`required init(coder:)`
+   (非failable)に修正して解決。UIKitのdesignated initializerをSwiftで
+   オーバーライドする際は、元のObjective-C宣言がfailableかどうかを
+   確認する必要がある。
+3. **`pod install`がRubyのUnicode正規化エラーで実行できない。**
+   ターミナルの`LANG`/`LC_ALL`が未設定(Cロケール相当)の状態で`pod install`
+   を実行すると、CocoaPods内部で使われる`String#unicode_normalize`が
+   `Unicode Normalization not appropriate for ASCII-8BIT`で例外を投げ、
+   何のPodfileエラーかも分からない状態で落ちた。`export LANG=en_US.UTF-8
+   LC_ALL=en_US.UTF-8`を設定してから再実行して解決。CocoaPods自体が
+   UTF-8ロケールを前提にしており、CIやシェル設定次第では素の状態で
+   詰まりやすい。
+4. **`test()`関数内で`TestDefaultBinaryMessengerBinding.instance`を使うと
+   Binding未初期化エラー。** `data`層のテストを`testWidgets`ではなく
+   素の`test`関数で書いたところ、`TestDefaultBinaryMessengerBinding.instance`
+   へのアクセスで`Binding has not yet been initialized`エラーになった。
+   `testWidgets`はウィジェットバインディングを自動初期化するが、素の`test`
+   ではされないため。`main()`冒頭で
+   `TestWidgetsFlutterBinding.ensureInitialized()`を呼んで解決。
+
+### 動作確認
+- Flutter: `flutter analyze`(No issues found)、`flutter test`
+  (presentation 5件 + data(native) 3件 + data(remote) 3件 = 11件全て成功)を確認。
+- Android: `./gradlew assembleDebug`が成功することを確認。エミュレータで
+  Input(ネイティブ) → 次へ → Confirm(**Flutter、Kotlin統合**) →
+  Confirm(**Flutter側`http`パッケージでPOST**) → Complete(ネイティブ)
+  という一連の流れを操作し、送信・遷移とも問題なく動作することを確認した。
+- iOS: `xcodebuild -workspace LegacyApp.xcworkspace -scheme LegacyApp ...`
+  が成功することを確認。シミュレータで同様に Input(ネイティブ) → 次へ →
+  Confirm(**Flutter、Swift統合**) → Confirm(**Flutter側`http`パッケージで
+  POST**) → Complete(ネイティブ)という流れを操作し、問題なく動作することを
+  確認した。
+
+---
+
 ## まとめ
 
 `confirm_module` の作成から Android/iOS 両方への組み込みまで、当初の計画
