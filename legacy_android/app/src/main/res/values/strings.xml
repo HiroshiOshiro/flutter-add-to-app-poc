@@ -16,17 +16,4 @@
     <string name="complete_message">送信が完了しました</string>
     <string name="action_back_to_start">最初に戻る</string>
     <string name="submit_failed">送信に失敗しました</string>
-
-    <!-- Music search -->
-    <string name="music_search_hint">アーティストや曲名で検索</string>
-    <string name="music_search_button">検索</string>
-    <string name="music_no_results">検索結果がありません</string>
-    <string name="music_search_error">検索に失敗しました</string>
-
-    <!-- Music detail -->
-    <string name="detail_title">曲の詳細</string>
-    <string name="label_album">アルバム</string>
-    <string name="label_genre">ジャンル</string>
-    <string name="action_add_favorite">お気に入りに追加</string>
-    <string name="action_remove_favorite">お気に入りを解除</string>
 </resources>

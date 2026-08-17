@@ -257,6 +257,128 @@
 
 ---
 
+## 5. Musicタブ全体(検索・一覧・詳細・お気に入り)のFlutter化
+
+「Musicタブもflutterにしたい」という要望を受けて、ネイティブで実装していた
+検索・一覧・詳細・お気に入り機能をすべてFlutter側に移した記録。
+
+### 作業内容
+- **`confirm_module`にMusic機能をレイヤードアーキテクチャで追加。**
+  `domain/`(`Track`エンティティ、`MusicSearchRepository`/`FavoritesRepository`、
+  各種UseCase)、`data/`(`ItunesRemoteDataSource`(`http`)、
+  `FavoritesLocalDataSource`(`sqflite`)、各リポジトリ実装)、`presentation/`
+  (`MusicListScreen`/`MusicDetailScreen`、詳細画面へは`Navigator.push`で
+  Flutter内遷移)を追加。`pubspec.yaml`に`sqflite`/`path`(本体)、
+  `sqflite_common_ffi`(テスト用、プラットフォームチャンネルなしで
+  `FavoritesLocalDataSource`を単体テストするため)を追加。
+- **`musicMain()`という別Dartエントリポイントを追加。** confirm画面の
+  `main()`とは別に、Musicタブ用のエンジンはこの関数から起動する。
+- **テストを13件追加**(`ItunesRemoteDataSource`3件、
+  `FavoritesLocalDataSource`2件、`MusicListScreen`5件、
+  `MusicDetailScreen`3件)。既存分と合わせて計24件。
+- **Android: `MusicFlutterEngineHolder.kt`(新規)を追加し、cached engine
+  パターンで統合。** `MainActivity.onCreate`でエンジンを事前起動し、
+  Musicタブ選択時は`FlutterFragment.withCachedEngine(...)`で表示。
+  `MusicFragment`/`TrackDetailActivity`/`TrackAdapter`/
+  `FavoritesDbHelper`/`FavoritesStore`/`ArtworkLoader`/`ItunesTrack`等の
+  旧ネイティブMusicコードを削除。
+- **iOS: `MusicFlutterEngine.swift`/`MusicFlutterViewController.swift`
+  (新規)を追加し、同じくcached engineパターンで統合。**
+  `SceneDelegate`の`musicVC`生成を差し替え。`MusicViewController`/
+  `TrackDetailViewController`/`FavoritesDatabase`/`FavoritesStore`/
+  `ArtworkLoader`/`TrackTableViewCell`/`ItunesTrack`等の旧ネイティブ
+  Musicコードを削除し、`libsqlite3.tbd`依存もproject.ymlから削除。
+
+### 想定外だったこと(重要)
+1. **1つのFlutterモジュールを組み込めるホストアプリは1つのモジュールまで、
+   という制約に気づいた。** Android側の`include_flutter.groovy`は
+   `gradle.include ":flutter"`とプロジェクト名を固定で宣言しており、
+   iOS側の`podhelper.rb`も`pod 'Flutter'`/`pod 'FlutterPluginRegistrant'`を
+   固定名で宣言する。そのため2つ目のFlutterモジュールをsource
+   module/CocoaPods経由で追加しようとすると名前が衝突する。**画面ごとに
+   別モジュールを作るのではなく、同じモジュール内で複数のDart
+   エントリポイントを使い分ける設計にする必要がある**と分かった
+   (この気づき自体がMIGRATION_GUIDE.mdに反映すべき知見)。
+2. **複数エントリポイントは、別ファイルに`@pragma('vm:entry-point')`を
+   付けるだけでは解決できない(最も時間を要した問題)。** 最初
+   `lib/music_main.dart`という別ファイルに`musicMain()`を定義し、
+   `main.dart`からimportするだけ(ツリーシェイキング対策)で済むと
+   考えたが、Android/iOSともに
+   `Could not resolve main entrypoint function`でエンジン起動に失敗した。
+   `DartExecutor.DartEntrypoint(path, "musicMain")`のような
+   ライブラリ指定なしのコンストラクタは、**ルートライブラリ(`main.dart`
+   自身)の中だけを探索する**ため、別ファイルで定義した関数は
+   (コンパイル済みでツリーシェイキングは免れていても)名前解決できない。
+   `FlutterFragment.withNewEngine().dartEntrypoint(...)`のような別の
+   APIパスでも同じ結果になることを確認し、cached engine機構自体の
+   問題ではないと切り分けた。最終的に`musicMain()`関数そのものを
+   `main.dart`に移動(呼び出す実装は`presentation/music_app.dart`等に
+   残したまま)して解決。**複数エントリポイントを使う場合、エントリ
+   ポイント関数自体は必ずmain.dartに置く必要がある。**
+3. **Android: 手動で`FlutterEngine`を作る場合は`FlutterLoader`の初期化
+   完了を待つ必要がある。** `FlutterActivity`/`FlutterFragment`は内部で
+   初期化完了を待ってからエンジンを作るが、`MusicFlutterEngineHolder`は
+   自前でエンジンを作るため、`FlutterInjector.instance().flutterLoader()`
+   に対して`ensureInitializationComplete(context, null)`を明示的に
+   呼んでおく必要がある(呼ばなくても動くことがあるため見逃しやすい)。
+4. **Android: 他のネイティブUIと同じウィンドウ内に部分的に埋め込む
+   `FlutterFragment`は`renderMode`に`RenderMode.texture`を使う。**
+   既定の`RenderMode.surface`のままだと、Musicタブの内容が真っ白の
+   まま何も描画されないことがあった(検索欄やボタンすら表示されない)。
+   `FlutterActivity`のようにその画面が実質的に全画面を占有する場合は
+   `surface`のままで問題ないが、タブの一部としてActionBar/
+   BottomNavigationViewと共存する今回の構成では`texture`が必要だった。
+5. **iOS: `sqflite_darwin`のヘッダーが、CocoaPodsのフラットな
+   `Headers/Private`シンボリックリンク経由だと解決できない。**
+   `SqflitePlugin.h`が自分自身のソースツリーからの相対パスで
+   `#import "include/sqflite_darwin/SqflitePluginPublic.h"`と書いており、
+   `FlutterPluginRegistrant`側から(モジュール経由で)このヘッダーを
+   参照すると、CocoaPodsが生成するフラットな symlink farm には
+   `include/`というサブディレクトリの階層が無いため
+   `'include/sqflite_darwin/SqflitePluginPublic.h' file not found`で
+   ビルドが失敗した。新しいXcodeの Explicit Modules ビルド
+   (`ScanDependencies`/`PrecompileModule`)で顕在化する問題と見られる。
+   `Podfile`の`post_install`で、`sqflite_darwin`の実ソースディレクトリ
+   (`.ios/.symlinks/plugins/sqflite_darwin/darwin/sqflite_darwin/Sources/sqflite_darwin`)
+   を全ターゲットの`HEADER_SEARCH_PATHS`に追加して解決した。
+   - この過程で、CocoaPodsの`post_install`フックから
+     `config.build_settings['HEADER_SEARCH_PATHS']`を**文字列**として
+     書き換えると、既存の配列形式の設定が文字列に丸ごと置き換わり、
+     手動で埋め込んだダブルクォートがそのままリテラル文字として
+     プロジェクトファイルに書き込まれてしまい、効果が出ないことにも
+     気づいた。既存値が配列かどうかを見て**配列のまま**追記する必要がある。
+6. **iOS: `GeneratedPluginRegistrant.register(with:)`は`engine.run()`より
+   後に呼ぶ必要がある(想定外の中でも重大)。** `sqflite`のような
+   ネイティブプラグインは`register(with:)`の中で`engine.binaryMessenger`
+   経由のMethodChannelハンドラを登録する。エンジンがrunする前に
+   `register(with:)`を呼ぶと、`FlutterBinaryMessengerRelay`内で
+   `Setting a message handler before the FlutterEngine has been run`
+   という`NSInternalInconsistencyException`でアプリ全体がクラッシュ
+   (起動直後、`SceneDelegate`が`MusicFlutterViewController`を生成した
+   瞬間に発生)。`ConfirmFlutterViewController.swift`も同じ順序
+   (`register`→`run`)で書かれていたが、confirm_moduleがsqfliteに
+   依存していなかった間は問題が表面化していなかっただけで、
+   Musicタブ追加でsqfliteが依存グラフに入った時点で**Confirm側も
+   同じ理由で潜在的にクラッシュしうる状態になっていた**ことが分かり、
+   合わせて`run()`→`register(with:)`の順に修正した。プラグインを
+   1つも使わないうちは`register`/`run`のどちらを先に呼んでも動いて
+   しまうため、後からプラグインを追加したタイミングで初めて表面化する
+   類の落とし穴。
+
+### 動作確認
+- Flutter: `flutter analyze`(No issues found)、`flutter test`
+  (24件全て成功)を確認。
+- Android: `./gradlew assembleDebug`が成功することを確認。エミュレータで
+  Musicタブへの切り替え → 検索 → 一覧(アートワーク画像・お気に入り
+  アイコン表示) → 詳細画面への遷移 → お気に入りのトグル(sqfliteへの
+  永続化) → 一覧に戻って星印に反映、という一連の流れを操作して確認した。
+- iOS: `xcodebuild -workspace LegacyApp.xcworkspace -scheme LegacyApp ...`
+  が成功することを確認。シミュレータで同様にMusicタブへの切り替え →
+  検索 → 一覧 → 詳細画面 → お気に入りのトグル → 一覧への反映という
+  流れを操作し、クラッシュなく動作することを確認した。
+
+---
+
 ## まとめ
 
 `confirm_module` の作成から Android/iOS 両方への組み込みまで、当初の計画

@@ -28,12 +28,18 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
-  # 確認内容の送信(POST)をFlutter側で直接行うために使用。
+  # 確認内容の送信(POST)、iTunes Search APIの呼び出しをFlutter側で直接行うために使用。
   http: ^1.2.0
+  # Musicタブのお気に入りをローカルDBに保存するために使用。
+  sqflite: ^2.3.0
+  path: ^1.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  # FavoritesLocalDataSource(sqflite)をプラットフォームチャンネルなしで
+  # 単体テストするために使用。
+  sqflite_common_ffi: ^2.3.3
   flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the

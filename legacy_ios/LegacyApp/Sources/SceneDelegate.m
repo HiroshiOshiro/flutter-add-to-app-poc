@@ -1,6 +1,6 @@
 #import "SceneDelegate.h"
 #import "InputViewController.h"
-#import "MusicViewController.h"
+#import "LegacyApp-Swift.h"
 
 @implementation SceneDelegate
 
@@ -11,7 +11,7 @@
     InputViewController *inputVC = [[InputViewController alloc] init];
     UINavigationController *memoNav = [[UINavigationController alloc] initWithRootViewController:inputVC];
 
-    MusicViewController *musicVC = [[MusicViewController alloc] init];
+    MusicFlutterViewController *musicVC = [[MusicFlutterViewController alloc] init];
     musicVC.navigationItem.title = NSLocalizedString(@"tab_music", nil);
     UINavigationController *musicNav = [[UINavigationController alloc] initWithRootViewController:musicVC];
 

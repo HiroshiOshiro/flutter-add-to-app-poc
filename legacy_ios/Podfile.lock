@@ -2,21 +2,29 @@ PODS:
   - Flutter (1.0.0)
   - FlutterPluginRegistrant (0.0.1):
     - Flutter
+    - sqflite_darwin
+  - sqflite_darwin (0.0.4):
+    - Flutter
+    - FlutterMacOS
 
 DEPENDENCIES:
   - Flutter (from `../confirm_module/.ios/Flutter`)
   - FlutterPluginRegistrant (from `../confirm_module/.ios/Flutter/FlutterPluginRegistrant`)
+  - sqflite_darwin (from `../confirm_module/.ios/.symlinks/plugins/sqflite_darwin/darwin`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: "../confirm_module/.ios/Flutter"
   FlutterPluginRegistrant:
     :path: "../confirm_module/.ios/Flutter/FlutterPluginRegistrant"
+  sqflite_darwin:
+    :path: "../confirm_module/.ios/.symlinks/plugins/sqflite_darwin/darwin"
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  FlutterPluginRegistrant: 1bf2b93dcc6a731089dfe77f7a867be153c5008f
+  FlutterPluginRegistrant: b6d51aaaad3f2c4e9da3d28a47094191536a84e6
+  sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
 
-PODFILE CHECKSUM: 62f97a310c2ee4b64d049faa30c186331378a358
+PODFILE CHECKSUM: a40f9a3b43829ca8702ae333384181d03e127ac0
 
 COCOAPODS: 1.17.0

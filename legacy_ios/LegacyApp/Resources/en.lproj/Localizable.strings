@@ -11,14 +11,3 @@
 "complete_message" = "Your submission is complete";
 "action_back_to_start" = "Back to start";
 "submit_failed" = "Failed to submit";
-
-"music_search_hint" = "Search by artist or song";
-"music_search_button" = "Search";
-"music_no_results" = "No results found";
-"music_search_error" = "Search failed";
-
-"detail_title" = "Track details";
-"label_album" = "Album";
-"label_genre" = "Genre";
-"action_add_favorite" = "Add to favorites";
-"action_remove_favorite" = "Remove from favorites";
