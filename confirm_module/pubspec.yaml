@@ -30,6 +30,8 @@ dependencies:
 
   # 確認内容の送信(POST)をFlutter側で直接行うために使用。
   http: ^1.2.0
+  # Confirm画面の状態管理・DIに使用。
+  flutter_riverpod: ^2.5.1
 
 dev_dependencies:
   flutter_test:
