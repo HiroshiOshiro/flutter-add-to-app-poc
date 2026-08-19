@@ -12,6 +12,8 @@
   （presentation/domain/dataのレイヤードアーキテクチャ）
 - `docs/MIGRATION_GUIDE.md` — 一般化した導入手順・設計判断のまとめ
 - `docs/FLUTTER_INTEGRATION_LOG.md` — 実際の作業ログ（つまずいた点の詳細）
+- `docs/FLUTTER_LEARNING_GUIDE.md` — Flutter未経験者向けの学習ガイド
+  （学習教材・つまずきやすいポイント・本リポジトリの読み方）
 
 ## 前提環境
 
