@@ -1,65 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../domain/entities/confirm_form_data.dart';
-import '../domain/usecases/complete_confirmation_usecase.dart';
-import '../domain/usecases/get_initial_data_usecase.dart';
-import '../domain/usecases/submit_confirmation_usecase.dart';
+import 'confirm_providers.dart';
 
-class ConfirmScreen extends StatefulWidget {
-  const ConfirmScreen({
-    super.key,
-    required this.getInitialData,
-    required this.submitConfirmation,
-    required this.completeConfirmation,
-  });
+class ConfirmScreen extends ConsumerWidget {
+  const ConfirmScreen({super.key});
 
-  final GetInitialDataUseCase getInitialData;
-  final SubmitConfirmationUseCase submitConfirmation;
-  final CompleteConfirmationUseCase completeConfirmation;
-
-  @override
-  State<ConfirmScreen> createState() => _ConfirmScreenState();
-}
-
-class _ConfirmScreenState extends State<ConfirmScreen> {
-  ConfirmFormData _formData =
-      const ConfirmFormData(name: '', email: '', message: '');
-  bool _loading = true;
-  bool _submitting = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadInitialData();
-  }
-
-  Future<void> _loadInitialData() async {
-    final ConfirmFormData data = await widget.getInitialData();
-    if (!mounted) return;
-    setState(() {
-      _formData = data;
-      _loading = false;
-    });
-  }
-
-  Future<void> _onConfirmTapped() async {
-    setState(() => _submitting = true);
-    bool success = false;
-    try {
-      success = await widget.submitConfirmation(_formData);
-    } finally {
-      if (mounted) setState(() => _submitting = false);
-    }
-
-    if (!mounted) return;
-    if (success) {
-      await widget.completeConfirmation();
-    } else {
-      _showError();
+  Future<void> _onConfirmTapped(BuildContext context, WidgetRef ref) async {
+    final bool success = await ref.read(confirmControllerProvider.notifier).submit();
+    if (!context.mounted) return;
+    if (!success) {
+      _showError(context);
     }
   }
 
-  void _showError() {
+  void _showError(BuildContext context) {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -105,8 +60,10 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (_loading) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ConfirmState state = ref.watch(confirmControllerProvider);
+
+    if (state.loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     return Scaffold(
@@ -132,15 +89,17 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              _row(_t('label_name'), _formData.name),
+              _row(_t('label_name'), state.formData.name),
               const SizedBox(height: 20),
-              _row(_t('label_email'), _formData.email),
+              _row(_t('label_email'), state.formData.email),
               const SizedBox(height: 20),
-              _row(_t('label_message'), _formData.message),
+              _row(_t('label_message'), state.formData.message),
               const SizedBox(height: 32),
               ElevatedButton(
-                onPressed: _submitting ? null : _onConfirmTapped,
-                child: _submitting
+                onPressed: state.submitting
+                    ? null
+                    : () => _onConfirmTapped(context, ref),
+                child: state.submitting
                     ? const SizedBox(
                         width: 20,
                         height: 20,

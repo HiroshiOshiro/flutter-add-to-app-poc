@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:confirm_module/domain/entities/confirm_form_data.dart';
 import 'package:confirm_module/domain/repositories/confirm_navigator.dart';
 import 'package:confirm_module/domain/repositories/confirm_repository.dart';
-import 'package:confirm_module/domain/usecases/complete_confirmation_usecase.dart';
-import 'package:confirm_module/domain/usecases/get_initial_data_usecase.dart';
-import 'package:confirm_module/domain/usecases/submit_confirmation_usecase.dart';
+import 'package:confirm_module/presentation/confirm_providers.dart';
 import 'package:confirm_module/presentation/confirm_screen.dart';
 
 class _FakeConfirmRepository implements ConfirmRepository {
@@ -38,7 +37,15 @@ class _FakeConfirmNavigator implements ConfirmNavigator {
   }
 }
 
-Widget _wrap(Widget child) => MaterialApp(home: child);
+Widget _wrap(ConfirmRepository repository, ConfirmNavigator navigator) {
+  return ProviderScope(
+    overrides: [
+      confirmRepositoryProvider.overrideWithValue(repository),
+      confirmNavigatorProvider.overrideWithValue(navigator),
+    ],
+    child: const MaterialApp(home: ConfirmScreen()),
+  );
+}
 
 void main() {
   const ConfirmFormData sampleData = ConfirmFormData(
@@ -51,11 +58,7 @@ void main() {
     final repository = _FakeConfirmRepository(initialData: sampleData);
     final navigator = _FakeConfirmNavigator();
 
-    await tester.pumpWidget(_wrap(ConfirmScreen(
-      getInitialData: GetInitialDataUseCase(repository),
-      submitConfirmation: SubmitConfirmationUseCase(repository),
-      completeConfirmation: CompleteConfirmationUseCase(navigator),
-    )));
+    await tester.pumpWidget(_wrap(repository, navigator));
     await tester.pumpAndSettle();
 
     expect(find.text('Taro'), findsOneWidget);
@@ -68,11 +71,7 @@ void main() {
     final repository = _DelayedFakeConfirmRepository(initialData: sampleData);
     final navigator = _FakeConfirmNavigator();
 
-    await tester.pumpWidget(_wrap(ConfirmScreen(
-      getInitialData: GetInitialDataUseCase(repository),
-      submitConfirmation: SubmitConfirmationUseCase(repository),
-      completeConfirmation: CompleteConfirmationUseCase(navigator),
-    )));
+    await tester.pumpWidget(_wrap(repository, navigator));
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -90,11 +89,7 @@ void main() {
     final repository = _FakeConfirmRepository(initialData: sampleData);
     final navigator = _FakeConfirmNavigator();
 
-    await tester.pumpWidget(_wrap(ConfirmScreen(
-      getInitialData: GetInitialDataUseCase(repository),
-      submitConfirmation: SubmitConfirmationUseCase(repository),
-      completeConfirmation: CompleteConfirmationUseCase(navigator),
-    )));
+    await tester.pumpWidget(_wrap(repository, navigator));
     await tester.pumpAndSettle();
 
     await tester.tap(find.widgetWithText(ElevatedButton, 'Confirm'));
@@ -111,11 +106,7 @@ void main() {
         _FakeConfirmRepository(initialData: sampleData, submitResult: false);
     final navigator = _FakeConfirmNavigator();
 
-    await tester.pumpWidget(_wrap(ConfirmScreen(
-      getInitialData: GetInitialDataUseCase(repository),
-      submitConfirmation: SubmitConfirmationUseCase(repository),
-      completeConfirmation: CompleteConfirmationUseCase(navigator),
-    )));
+    await tester.pumpWidget(_wrap(repository, navigator));
     await tester.pumpAndSettle();
 
     await tester.tap(find.widgetWithText(ElevatedButton, 'Confirm'));
@@ -139,11 +130,7 @@ void main() {
     );
     final navigator = _FakeConfirmNavigator();
 
-    await tester.pumpWidget(_wrap(ConfirmScreen(
-      getInitialData: GetInitialDataUseCase(repository),
-      submitConfirmation: SubmitConfirmationUseCase(repository),
-      completeConfirmation: CompleteConfirmationUseCase(navigator),
-    )));
+    await tester.pumpWidget(_wrap(repository, navigator));
     await tester.pumpAndSettle();
 
     await tester.tap(find.widgetWithText(ElevatedButton, 'Confirm'));

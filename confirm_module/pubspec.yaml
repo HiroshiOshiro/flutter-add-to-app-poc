@@ -33,6 +33,8 @@ dependencies:
   # Musicタブのお気に入りをローカルDBに保存するために使用。
   sqflite: ^2.3.0
   path: ^1.9.0
+  # Confirm画面の状態管理・DIに使用。
+  flutter_riverpod: ^2.5.1
 
 dev_dependencies:
   flutter_test:
