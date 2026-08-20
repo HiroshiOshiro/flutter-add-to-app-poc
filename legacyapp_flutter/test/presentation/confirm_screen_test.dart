@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:confirm_module/domain/entities/confirm_form_data.dart';
-import 'package:confirm_module/domain/repositories/confirm_navigator.dart';
-import 'package:confirm_module/domain/repositories/confirm_repository.dart';
-import 'package:confirm_module/presentation/confirm_providers.dart';
-import 'package:confirm_module/presentation/confirm_screen.dart';
+import 'package:legacyapp_flutter/domain/entities/confirm_form_data.dart';
+import 'package:legacyapp_flutter/domain/repositories/confirm_navigator.dart';
+import 'package:legacyapp_flutter/domain/repositories/confirm_repository.dart';
+import 'package:legacyapp_flutter/presentation/confirm_providers.dart';
+import 'package:legacyapp_flutter/presentation/confirm_screen.dart';
 
 class _FakeConfirmRepository implements ConfirmRepository {
   _FakeConfirmRepository({

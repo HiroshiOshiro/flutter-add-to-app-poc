@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
-import 'package:confirm_module/data/datasources/itunes_remote_datasource.dart';
+import 'package:legacyapp_flutter/data/datasources/itunes_remote_datasource.dart';
 
 void main() {
   test('search parses the iTunes response into tracks', () async {

@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'package:confirm_module/data/datasources/favorites_local_datasource.dart';
+import 'package:legacyapp_flutter/data/datasources/favorites_local_datasource.dart';
 
 void main() {
   setUpAll(() {

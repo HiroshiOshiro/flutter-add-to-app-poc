@@ -128,17 +128,17 @@ Flutterのテストは主に2種類ある。
 ここからは本リポジトリ固有の案内。上記の基礎を一通り触った前提で、
 実際のコードを次の順序で読むと理解しやすい。
 
-1. **`confirm_module/lib/domain/`** — このアプリが何をするか（エンティティ・
+1. **`legacyapp_flutter/lib/domain/`** — このアプリが何をするか（エンティティ・
    リポジトリのインターフェース・ユースケース）が、実装に引っ張られず
    一番シンプルに書かれている。最初に読むべき場所。
-2. **`confirm_module/lib/presentation/confirm_screen.dart`** —
+2. **`legacyapp_flutter/lib/presentation/confirm_screen.dart`** —
    実際の画面（Widget）。`ConsumerWidget`と`ref.watch`の実例。
-3. **`confirm_module/lib/presentation/confirm_providers.dart`** —
+3. **`legacyapp_flutter/lib/presentation/confirm_providers.dart`** —
    Riverpodの`Provider`/`NotifierProvider`定義。DIの配線と状態管理が
    ここに集約されている。
-4. **`confirm_module/lib/data/`** — domain層のインターフェースを実際に
+4. **`legacyapp_flutter/lib/data/`** — domain層のインターフェースを実際に
    満たす実装（ネイティブとの`MethodChannel`通信、HTTP通信など）。
-5. **`confirm_module/test/`** — 各層をどう単体テスト・Widgetテストしているか。
+5. **`legacyapp_flutter/test/`** — 各層をどう単体テスト・Widgetテストしているか。
    fakeの作り方、`ProviderScope(overrides: [...])`の使い方の実例。
 
 この5つを読めば、「画面(Widget) → 状態管理(Riverpod) → ユースケース →
@@ -160,10 +160,10 @@ Flutterのテストは主に2種類ある。
 
 読むだけでなく、次のような小さな変更を自分で加えてみると定着が早い。
 
-- `confirm_module/lib/presentation/confirm_screen.dart`のラベル文言を
+- `legacyapp_flutter/lib/presentation/confirm_screen.dart`のラベル文言を
   変えてホットリロードで確認する
 - `ConfirmState`に新しいフィールドを1つ追加し、画面に表示してみる
-- `confirm_module/test/presentation/confirm_screen_test.dart`に、
+- `legacyapp_flutter/test/presentation/confirm_screen_test.dart`に、
   自分で考えたテストケースを1つ追加してみる
 - [README.md](../README.md)の手順に沿って、実際にAndroid/iOSアプリを
   ビルドして実機/エミュレータで動かしてみる

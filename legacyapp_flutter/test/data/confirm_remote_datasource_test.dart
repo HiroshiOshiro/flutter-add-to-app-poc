@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
-import 'package:confirm_module/data/datasources/confirm_remote_datasource.dart';
-import 'package:confirm_module/domain/entities/confirm_form_data.dart';
+import 'package:legacyapp_flutter/data/datasources/confirm_remote_datasource.dart';
+import 'package:legacyapp_flutter/domain/entities/confirm_form_data.dart';
 
 void main() {
   const ConfirmFormData sampleData = ConfirmFormData(

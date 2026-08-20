@@ -24,7 +24,7 @@ const Map<String, String> _en = {
   'action_remove_favorite': 'Remove from favorites',
 };
 
-// confirm_module の他画面と同じく flutter_localizations は使わず、ネイティブ側の
+// legacyapp_flutter の他画面と同じく flutter_localizations は使わず、ネイティブ側の
 // strings.xml / Localizable.strings と同じキーを持つ簡易な辞書で日英を切り替える。
 String musicT(String key) {
   final String languageCode =

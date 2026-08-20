@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:confirm_module/data/datasources/confirm_native_datasource.dart';
+import 'package:legacyapp_flutter/data/datasources/confirm_native_datasource.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

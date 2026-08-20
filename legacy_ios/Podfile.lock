@@ -8,23 +8,23 @@ PODS:
     - FlutterMacOS
 
 DEPENDENCIES:
-  - Flutter (from `../confirm_module/.ios/Flutter`)
-  - FlutterPluginRegistrant (from `../confirm_module/.ios/Flutter/FlutterPluginRegistrant`)
-  - sqflite_darwin (from `../confirm_module/.ios/.symlinks/plugins/sqflite_darwin/darwin`)
+  - Flutter (from `../legacyapp_flutter/.ios/Flutter`)
+  - FlutterPluginRegistrant (from `../legacyapp_flutter/.ios/Flutter/FlutterPluginRegistrant`)
+  - sqflite_darwin (from `../legacyapp_flutter/.ios/.symlinks/plugins/sqflite_darwin/darwin`)
 
 EXTERNAL SOURCES:
   Flutter:
-    :path: "../confirm_module/.ios/Flutter"
+    :path: "../legacyapp_flutter/.ios/Flutter"
   FlutterPluginRegistrant:
-    :path: "../confirm_module/.ios/Flutter/FlutterPluginRegistrant"
+    :path: "../legacyapp_flutter/.ios/Flutter/FlutterPluginRegistrant"
   sqflite_darwin:
-    :path: "../confirm_module/.ios/.symlinks/plugins/sqflite_darwin/darwin"
+    :path: "../legacyapp_flutter/.ios/.symlinks/plugins/sqflite_darwin/darwin"
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   FlutterPluginRegistrant: b6d51aaaad3f2c4e9da3d28a47094191536a84e6
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
 
-PODFILE CHECKSUM: a40f9a3b43829ca8702ae333384181d03e127ac0
+PODFILE CHECKSUM: d896746ec604ec836bf586d926529e66524eddc8
 
 COCOAPODS: 1.17.0

@@ -2,7 +2,7 @@ import Flutter
 import FlutterPluginRegistrant
 import UIKit
 
-// 確認内容の送信(POST)はFlutter側(confirm_module)に寄せたため、ここで
+// 確認内容の送信(POST)はFlutter側(legacyapp_flutter)に寄せたため、ここで
 // 実装するのはBaseViewControllerが保持する状態の受け渡しと、完了画面への
 // 遷移依頼のみ。Flutter統合の新規コードはSwiftで書く方針にしたため、
 // 移行前の他のViewController(Objective-C)とは異なりこのクラスだけSwift。

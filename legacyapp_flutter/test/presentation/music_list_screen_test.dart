@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:confirm_module/domain/entities/track.dart';
-import 'package:confirm_module/domain/repositories/favorites_repository.dart';
-import 'package:confirm_module/domain/repositories/music_search_repository.dart';
-import 'package:confirm_module/domain/usecases/get_favorite_ids_usecase.dart';
-import 'package:confirm_module/domain/usecases/search_tracks_usecase.dart';
-import 'package:confirm_module/domain/usecases/toggle_favorite_usecase.dart';
-import 'package:confirm_module/presentation/music_list_screen.dart';
+import 'package:legacyapp_flutter/domain/entities/track.dart';
+import 'package:legacyapp_flutter/domain/repositories/favorites_repository.dart';
+import 'package:legacyapp_flutter/domain/repositories/music_search_repository.dart';
+import 'package:legacyapp_flutter/domain/usecases/get_favorite_ids_usecase.dart';
+import 'package:legacyapp_flutter/domain/usecases/search_tracks_usecase.dart';
+import 'package:legacyapp_flutter/domain/usecases/toggle_favorite_usecase.dart';
+import 'package:legacyapp_flutter/presentation/music_list_screen.dart';
 
 class _FakeMusicSearchRepository implements MusicSearchRepository {
   _FakeMusicSearchRepository(this.results);

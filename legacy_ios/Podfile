@@ -1,6 +1,6 @@
 platform :ios, '16.0'
 
-flutter_application_path = '../confirm_module'
+flutter_application_path = '../legacyapp_flutter'
 load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
 
 target 'LegacyApp' do

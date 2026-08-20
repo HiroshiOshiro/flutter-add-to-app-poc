@@ -10,7 +10,7 @@
 - `legacy_ios/` — 移行前を模したiOSアプリ（Objective-C）。確認画面
   （`ConfirmFlutterViewController.swift`）とMusicタブ
   （`MusicFlutterViewController.swift`）がFlutter化済み
-- `confirm_module/` — 確認画面・Music機能を実装したFlutterモジュール
+- `legacyapp_flutter/` — 確認画面・Music機能を実装したFlutterモジュール
   （presentation/domain/dataのレイヤードアーキテクチャ、`main()`と
   `musicMain()`の2つのDartエントリポイントを持つ）
 - `docs/MIGRATION_GUIDE.md` — 一般化した導入手順・設計判断のまとめ
@@ -20,7 +20,7 @@
 
 ## 前提環境
 
-- Flutter SDK（`confirm_module/.metadata` に記録されているものと同じ
+- Flutter SDK（`legacyapp_flutter/.metadata` に記録されているものと同じ
   リビジョン・チャンネルを推奨）
 - Android: Android Studio（JDK同梱）、Android SDK、Androidエミュレータ
 - iOS: Xcode、CocoaPods、[XcodeGen](https://github.com/yonaskolb/XcodeGen)
@@ -30,7 +30,7 @@
 
 1. Flutterモジュールの依存を取得しておく（初回のみ）
    ```bash
-   cd confirm_module
+   cd legacyapp_flutter
    flutter pub get
    ```
 2. `legacy_android` をAndroid Studioで開き、エミュレータ/実機を選んで
@@ -57,7 +57,7 @@ adb shell am start -n com.example.legacyapp/.MainActivity
 
 1. Flutterモジュールの依存を取得しておく（初回のみ、Androidと共通）
    ```bash
-   cd confirm_module
+   cd legacyapp_flutter
    flutter pub get
    ```
 2. Xcodeプロジェクトを生成し、CocoaPodsで依存を解決する
@@ -88,10 +88,10 @@ xcodebuild -workspace LegacyApp.xcworkspace -scheme LegacyApp \
   -destination "generic/platform=iOS Simulator" build
 ```
 
-## confirm_module（Flutterモジュール）単体で確認する
+## legacyapp_flutter（Flutterモジュール）単体で確認する
 
 ```bash
-cd confirm_module
+cd legacyapp_flutter
 flutter pub get
 flutter analyze
 flutter test
@@ -103,7 +103,7 @@ flutter test
 
 1. Name / Email / Message を入力して「次へ」
 2. 確認画面（Flutter製）で入力内容を確認し「確定」
-   - 送信（POST）はFlutter側（`confirm_module`）が直接行う
+   - 送信（POST）はFlutter側（`legacyapp_flutter`）が直接行う
 3. 完了画面（ネイティブ）に自動遷移
 
 「Music」タブ（Flutter製）では iTunes Search API を使った楽曲検索・

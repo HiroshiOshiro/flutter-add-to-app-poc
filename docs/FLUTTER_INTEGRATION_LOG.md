@@ -1,13 +1,13 @@
 # Flutter組み込み作業ログ
 
-`confirm_module`（確認画面のFlutterモジュール）の作成と、`legacy_android`
+`legacyapp_flutter`（確認画面のFlutterモジュール）の作成と、`legacy_android`
 `legacy_ios` への組み込み作業の記録。実施した作業内容と、作業中に発生した
 想定外の問題・その対処を時系列で残す。
 
-## 1. confirm_module（Flutterモジュール単体）作成
+## 1. legacyapp_flutter（Flutterモジュール単体）作成
 
 ### 作業内容
-- `flutter create --template module --org com.example confirm_module` でモジュールを作成。
+- `flutter create --template module --org com.example legacyapp_flutter` でモジュールを作成。
 - 確認画面 (`lib/main.dart`) を実装。ネイティブとは `MethodChannel`
   (`com.example.legacyapp/confirm`) 1本で通信し、以下3メソッドのみを使う設計にした。
   - `getInitialData` : ネイティブが保持する入力内容 (name/email/message) を取得
@@ -41,10 +41,10 @@
 
 ---
 
-## 2. Android統合（confirm_moduleをlegacy_androidへ組み込み）
+## 2. Android統合（legacyapp_flutterをlegacy_androidへ組み込み）
 
 ### 作業内容
-- `settings.gradle` に `confirm_module/.android/include_flutter.groovy` を
+- `settings.gradle` に `legacyapp_flutter/.android/include_flutter.groovy` を
   `evaluate` する形でsourceモジュールとして取り込み、`app/build.gradle` に
   `implementation project(':flutter')` を追加。
 - `ConfirmFlutterActivity`（`io.flutter.embedding.android.FlutterActivity`
@@ -64,7 +64,7 @@
 1. **`dependencyResolutionManagement` の `FAIL_ON_PROJECT_REPOS` と衝突。**
    `legacy_android/settings.gradle` は最初から
    `repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)` を設定していたが、
-   Flutter Gradleプラグイン (`confirm_module/.android/Flutter/build.gradle`)
+   Flutter Gradleプラグイン (`legacyapp_flutter/.android/Flutter/build.gradle`)
    がプロジェクトレベルで独自にmavenリポジトリを追加しようとするため、
    ```
    Build was configured to prefer settings repositories over project repositories
@@ -96,10 +96,10 @@
 
 ---
 
-## 3. iOS統合（confirm_moduleをlegacy_iosへ組み込み）
+## 3. iOS統合（legacyapp_flutterをlegacy_iosへ組み込み）
 
 ### 作業内容
-- `legacy_ios/Podfile` を作成し、`confirm_module/.ios/Flutter/podhelper.rb` を
+- `legacy_ios/Podfile` を作成し、`legacyapp_flutter/.ios/Flutter/podhelper.rb` を
   `load` して `install_all_flutter_pods` で組み込み。`pod install` で
   `LegacyApp.xcworkspace` を生成。
 - `ConfirmFlutterViewController`（`FlutterViewController` のサブクラス）を
@@ -174,7 +174,7 @@
 作業の記録。
 
 ### 作業内容
-- **`confirm_module`をレイヤードアーキテクチャ(presentation/domain/data)に
+- **`legacyapp_flutter`をレイヤードアーキテクチャ(presentation/domain/data)に
   再構成。** `lib/main.dart`に集中していたUI・状態管理・MethodChannel呼び出しを
   以下に分割:
   - `domain/`: `ConfirmFormData`(エンティティ)、`ConfirmRepository`/
@@ -263,7 +263,7 @@
 検索・一覧・詳細・お気に入り機能をすべてFlutter側に移した記録。
 
 ### 作業内容
-- **`confirm_module`にMusic機能をレイヤードアーキテクチャで追加。**
+- **`legacyapp_flutter`にMusic機能をレイヤードアーキテクチャで追加。**
   `domain/`(`Track`エンティティ、`MusicSearchRepository`/`FavoritesRepository`、
   各種UseCase)、`data/`(`ItunesRemoteDataSource`(`http`)、
   `FavoritesLocalDataSource`(`sqflite`)、各リポジトリ実装)、`presentation/`
@@ -356,7 +356,7 @@
    という`NSInternalInconsistencyException`でアプリ全体がクラッシュ
    (起動直後、`SceneDelegate`が`MusicFlutterViewController`を生成した
    瞬間に発生)。`ConfirmFlutterViewController.swift`も同じ順序
-   (`register`→`run`)で書かれていたが、confirm_moduleがsqfliteに
+   (`register`→`run`)で書かれていたが、legacyapp_flutterがsqfliteに
    依存していなかった間は問題が表面化していなかっただけで、
    Musicタブ追加でsqfliteが依存グラフに入った時点で**Confirm側も
    同じ理由で潜在的にクラッシュしうる状態になっていた**ことが分かり、
@@ -381,7 +381,7 @@
 
 ## まとめ
 
-`confirm_module` の作成から Android/iOS 両方への組み込みまで、当初の計画
+`legacyapp_flutter` の作成から Android/iOS 両方への組み込みまで、当初の計画
 (docs/... ではなく会話内で確認したプラン)通りに完了した。想定外だった点は
 いずれも「add-to-appの一般的な落とし穴」に分類できるもので、実際に手を
 動かさないと気づきにくい類のものだった:

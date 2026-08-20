@@ -5,7 +5,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
-// 確認内容の送信(POST)はFlutter側(confirm_module)に寄せたため、ここで
+// 確認内容の送信(POST)はFlutter側(legacyapp_flutter)に寄せたため、ここで
 // 実装するのはBaseActivityが保持する状態の受け渡しと、完了画面への
 // 遷移依頼のみ。Flutter統合の新規コードはKotlinで書く方針にしたため、
 // 移行前の他のActivity(Java)とは異なりこのクラスだけKotlin。

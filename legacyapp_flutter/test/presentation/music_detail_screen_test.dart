@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:confirm_module/domain/entities/track.dart';
-import 'package:confirm_module/domain/repositories/favorites_repository.dart';
-import 'package:confirm_module/domain/usecases/toggle_favorite_usecase.dart';
-import 'package:confirm_module/presentation/music_detail_screen.dart';
+import 'package:legacyapp_flutter/domain/entities/track.dart';
+import 'package:legacyapp_flutter/domain/repositories/favorites_repository.dart';
+import 'package:legacyapp_flutter/domain/usecases/toggle_favorite_usecase.dart';
+import 'package:legacyapp_flutter/presentation/music_detail_screen.dart';
 
 class _FakeFavoritesRepository implements FavoritesRepository {
   _FakeFavoritesRepository([Set<int>? initial]) : _ids = {...?initial};

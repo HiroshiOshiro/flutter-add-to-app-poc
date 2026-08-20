@@ -16,7 +16,7 @@ stages:
   - build
 
 variables:
-  # confirm_module/.metadata に記録されているFlutter SDKバージョンと
+  # legacyapp_flutter/.metadata に記録されているFlutter SDKバージョンと
   # 一致させること（ずれるとネイティブ側のsource module統合がビルドできない）。
   FLUTTER_VERSION: "3.41.2"
   PUB_CACHE: "${CI_PROJECT_DIR}/.pub-cache"
@@ -38,7 +38,7 @@ flutter:test:
   cache:
     <<: *flutter_pub_cache
   before_script:
-    - cd confirm_module
+    - cd legacyapp_flutter
     - flutter pub get
   script:
     - flutter analyze
@@ -54,7 +54,7 @@ flutter:test:
 
 android:build:
   stage: build
-  # legacy_android は confirm_module を source module として組み込んでいる
+  # legacy_android は legacyapp_flutter を source module として組み込んでいる
   # (docs/MIGRATION_GUIDE.md の「source module か AAR か」参照) ため、
   # ホスト側のビルドにもFlutter SDKが必要。Android SDK同梱のFlutterイメージを使う。
   image: cirrusci/flutter:${FLUTTER_VERSION}

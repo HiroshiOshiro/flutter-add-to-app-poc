@@ -1,4 +1,4 @@
-# confirm_module
+# legacyapp_flutter
 
 A new Flutter module project.
 
