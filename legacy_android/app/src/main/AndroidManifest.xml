@@ -28,10 +28,6 @@
             android:name=".CompleteActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".TrackDetailActivity"
-            android:exported="false" />
-
     </application>
 
 </manifest>

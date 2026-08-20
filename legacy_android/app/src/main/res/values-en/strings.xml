@@ -16,17 +16,4 @@
     <string name="complete_message">Your submission is complete</string>
     <string name="action_back_to_start">Back to start</string>
     <string name="submit_failed">Failed to submit</string>
-
-    <!-- Music search -->
-    <string name="music_search_hint">Search by artist or song</string>
-    <string name="music_search_button">Search</string>
-    <string name="music_no_results">No results found</string>
-    <string name="music_search_error">Search failed</string>
-
-    <!-- Music detail -->
-    <string name="detail_title">Track details</string>
-    <string name="label_album">Album</string>
-    <string name="label_genre">Genre</string>
-    <string name="action_add_favorite">Add to favorites</string>
-    <string name="action_remove_favorite">Remove from favorites</string>
 </resources>

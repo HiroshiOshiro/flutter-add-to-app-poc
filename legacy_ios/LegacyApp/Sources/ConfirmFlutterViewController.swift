@@ -20,10 +20,15 @@ class ConfirmFlutterViewController: FlutterViewController {
 
     init() {
         let engine = FlutterEngine(name: "confirm_engine")
-        GeneratedPluginRegistrant.register(with: engine)
         // engine.binaryMessenger はエンジンがrunした後でないと使えないため、
         // run()を先に済ませてからsuper.init(engine:)でアタッチする。
+        // sqfliteのようなネイティブプラグインはregister(with:)の中でも
+        // engine.binaryMessenger経由のチャンネル登録を行うため、
+        // GeneratedPluginRegistrant.register(with:)もrun()より後に呼ぶ
+        // 必要がある(先に呼ぶと「Setting a message handler before the
+        // FlutterEngine has been run」でクラッシュする)。
         engine.run()
+        GeneratedPluginRegistrant.register(with: engine)
 
         ownedEngine = engine
         super.init(engine: engine, nibName: nil, bundle: nil)

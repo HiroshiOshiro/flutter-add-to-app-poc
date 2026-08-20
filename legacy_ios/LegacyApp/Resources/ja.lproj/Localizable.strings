@@ -11,14 +11,3 @@
 "complete_message" = "送信が完了しました";
 "action_back_to_start" = "最初に戻る";
 "submit_failed" = "送信に失敗しました";
-
-"music_search_hint" = "アーティストや曲名で検索";
-"music_search_button" = "検索";
-"music_no_results" = "検索結果がありません";
-"music_search_error" = "検索に失敗しました";
-
-"detail_title" = "曲の詳細";
-"label_album" = "アルバム";
-"label_genre" = "ジャンル";
-"action_add_favorite" = "お気に入りに追加";
-"action_remove_favorite" = "お気に入りを解除";

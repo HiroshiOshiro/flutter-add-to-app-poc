@@ -11,8 +11,6 @@ targets:
     sources:
       - path: LegacyApp/Sources
       - path: LegacyApp/Resources
-    dependencies:
-      - sdk: libsqlite3.tbd
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.legacyapp

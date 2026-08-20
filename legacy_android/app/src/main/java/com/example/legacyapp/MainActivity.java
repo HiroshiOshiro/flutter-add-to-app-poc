@@ -10,12 +10,19 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import io.flutter.embedding.android.FlutterFragment;
+import io.flutter.embedding.android.RenderMode;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Musicタブを開く前にエンジンを起動しておくことで、初回タップ時にも
+        // 待たせない(MusicFlutterEngineHolderのcached engineパターン)。
+        MusicFlutterEngineHolder.INSTANCE.warmUp(this);
 
         if (savedInstanceState == null) {
             showFragment(new MemoFragment());
@@ -38,7 +45,12 @@ public class MainActivity extends AppCompatActivity {
                 showFragment(new MemoFragment());
                 return true;
             } else if (id == R.id.nav_music) {
-                showFragment(new MusicFragment());
+                // Music画面は他のネイティブUI(ActionBar/BottomNavigationView)と
+                // 同じウィンドウ内で部分的に組み込まれるため、公式ドキュメントの
+                // 推奨通りSurfaceViewベースの既定renderModeではなくTextureViewを使う。
+                showFragment(FlutterFragment.withCachedEngine(MusicFlutterEngineHolder.ENGINE_ID)
+                        .renderMode(RenderMode.texture)
+                        .build());
                 return true;
             }
             return false;

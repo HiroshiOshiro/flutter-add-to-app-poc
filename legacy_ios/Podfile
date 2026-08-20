@@ -9,4 +9,28 @@ end
 
 post_install do |installer|
   flutter_post_install(installer)
+
+  # sqflite_darwinのSqflitePlugin.hは自分自身のソースツリーからの相対パスで
+  # `#import "include/sqflite_darwin/SqflitePluginPublic.h"` を書いている。
+  # 他のpod(FlutterPluginRegistrant)からモジュール経由でこのヘッダーを
+  # 参照すると、CocoaPodsが作るフラットな Headers/Private シンボリックリンク
+  # 経由になり、この相対importが解決できず
+  # `'include/sqflite_darwin/SqflitePluginPublic.h' file not found` で
+  # ビルドが失敗する(新しいXcodeのExplicit Modulesビルドで顕在化する)。
+  # sqflite_darwin自身の実ソースディレクトリを検索パスに加えて解決する。
+  sqflite_darwin_src = File.expand_path(
+    File.join(flutter_application_path, '.ios', '.symlinks', 'plugins', 'sqflite_darwin',
+              'darwin', 'sqflite_darwin', 'Sources', 'sqflite_darwin'),
+    __dir__
+  )
+  if Dir.exist?(sqflite_darwin_src)
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        existing = config.build_settings['HEADER_SEARCH_PATHS']
+        paths = existing.is_a?(Array) ? existing.dup : [existing || '$(inherited)']
+        paths << sqflite_darwin_src
+        config.build_settings['HEADER_SEARCH_PATHS'] = paths
+      end
+    end
+  end
 end

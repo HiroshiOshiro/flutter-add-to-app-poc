@@ -4,12 +4,15 @@
 アーキテクチャ）に、Flutterを画面単位で段階的に導入する「add-to-app」方式の
 検証用リポジトリ。
 
-- `legacy_android/` — 移行前を模したAndroidアプリ（Java）。確認画面のみ
-  Flutter化済み（`ConfirmFlutterActivity.kt`）
-- `legacy_ios/` — 移行前を模したiOSアプリ（Objective-C）。確認画面のみ
-  Flutter化済み（`ConfirmFlutterViewController.swift`）
-- `confirm_module/` — 確認画面を実装したFlutterモジュール
-  （presentation/domain/dataのレイヤードアーキテクチャ）
+- `legacy_android/` — 移行前を模したAndroidアプリ（Java）。確認画面
+  （`ConfirmFlutterActivity.kt`）とMusicタブ（`MusicFlutterEngineHolder.kt`）
+  がFlutter化済み
+- `legacy_ios/` — 移行前を模したiOSアプリ（Objective-C）。確認画面
+  （`ConfirmFlutterViewController.swift`）とMusicタブ
+  （`MusicFlutterViewController.swift`）がFlutter化済み
+- `confirm_module/` — 確認画面・Music機能を実装したFlutterモジュール
+  （presentation/domain/dataのレイヤードアーキテクチャ、`main()`と
+  `musicMain()`の2つのDartエントリポイントを持つ）
 - `docs/MIGRATION_GUIDE.md` — 一般化した導入手順・設計判断のまとめ
 - `docs/FLUTTER_INTEGRATION_LOG.md` — 実際の作業ログ（つまずいた点の詳細）
 - `docs/FLUTTER_LEARNING_GUIDE.md` — Flutter未経験者向けの学習ガイド
@@ -103,5 +106,6 @@ flutter test
    - 送信（POST）はFlutter側（`confirm_module`）が直接行う
 3. 完了画面（ネイティブ）に自動遷移
 
-「Music」タブでは iTunes Search API を使った楽曲検索・お気に入り登録
-（ローカルSQLite保存）を確認できる。
+「Music」タブ（Flutter製）では iTunes Search API を使った楽曲検索・
+一覧・詳細表示・お気に入り登録（`sqflite`によるローカルDB保存）を
+確認できる。検索結果一覧・詳細画面ともFlutter内の`Navigator`で遷移する。
