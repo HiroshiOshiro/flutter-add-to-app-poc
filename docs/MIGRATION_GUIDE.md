@@ -58,6 +58,64 @@ Objective-C/Java製の大規模な既存アプリに対して、Flutterを「add
 PoCや検証段階ではsource moduleで素早く確認し、複数チームが関わる本番導入では
 AARへの切り替えを検討するとよい。
 
+### source moduleの仕組み
+
+ホストアプリ側で書くのは `settings.gradle` の1箇所と `app/build.gradle` の
+依存1行だけで、残りはFlutterモジュールの `.android/` 以下（`flutter pub get`
+が生成する、バージョン管理対象外のディレクトリ）が引き受ける。
+
+```mermaid
+flowchart LR
+    subgraph HOST["ホストアプリ（手で書くのはこの2箇所だけ）"]
+        SG["settings.gradle"]
+        BG["app/build.gradle"]
+    end
+
+    subgraph MOD["Flutterモジュール"]
+        LIB["lib/*.dart<br/>pubspec.yaml"]
+        IG[".android/include_flutter.groovy<br/>（生成物・gitignore対象）"]
+    end
+
+    subgraph GRADLE["Gradleが認識するサブプロジェクト"]
+        FL["':flutter'"]
+        PL["':plugin_a', ':plugin_b' …<br/>（pubspecの各プラグイン）"]
+    end
+
+    SG -->|"evaluate()"| IG
+    IG -->|"include"| FL
+    IG -->|"include"| PL
+    BG -->|"implementation project(':flutter')"| FL
+    FL -.->|"ビルド時にコンパイル"| LIB
+```
+
+ここで重要なのは、Gradleサブプロジェクト名が **`:flutter` に固定されている**
+という点。`include_flutter.groovy` がこの名前をハードコードしているため、
+**1つのホストアプリに組み込めるFlutterモジュールは1つだけ**になる（複数画面を
+Flutter化する場合の構成は6節を参照）。モジュールのディレクトリ名やDartの
+パッケージ名を変えても、このサブプロジェクト名は変わらない。
+
+### ビルド時に何が起きるか
+
+source module方式では、ホストアプリのビルドコマンド1発でDartのコンパイルまで
+一緒に走る。これが「手軽だが、ビルドする全員にFlutter SDKが必要」という
+トレードオフの正体である。
+
+```mermaid
+flowchart TB
+    A["ホストアプリのビルドコマンド実行"] --> B["':flutter' サブプロジェクトの<br/>Gradleタスクが起動"]
+    B --> C["Flutterツールチェーンが lib/*.dart をコンパイル<br/>Debug: kernel_blob.bin ／ Release: libapp.so"]
+    C --> D["flutter_assets/ にまとめる<br/>（Dartコード・フォント・アセット）"]
+    D --> E["Flutterエンジン本体の共有ライブラリと共に<br/>APK/AABへ同梱"]
+    E --> F["ホストアプリのAPK/AAB"]
+
+    B -.->|"未インストールならここで失敗"| G["ローカルのFlutter SDK"]
+    C -.-> G
+```
+
+AAR方式との違いはこの図の**分割位置**だけで、AARではDartのコンパイルから
+バイナリ生成までがFlutterモジュール側の独立したビルドとして先に完了しており、
+ホストアプリは出来上がったバイナリを依存として取り込むだけになる。
+
 ### ハマりやすい点: 集中管理リポジトリとの衝突
 
 `settings.gradle` で `dependencyResolutionManagement.repositoriesMode` を
