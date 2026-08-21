@@ -21,7 +21,7 @@ void main() {
 // Flutterモジュールは1つまでという制約(source module/CocoaPods integration
 // がともに単一モジュール前提のAPIになっている)があるため、画面ごとに
 // モジュールを分けるのではなく、同じモジュール内で複数のDartエントリポイントを
-// 使い分ける(docs/MIGRATION_GUIDE.md 9節参照)。
+// 使い分ける(docs/MIGRATION_GUIDE.md 6節参照)。
 //
 // この関数自体は main.dart (エンジンのルートライブラリ) に置く必要がある。
 // 別ファイルに置いて @pragma('vm:entry-point') を付けるだけではツリー
