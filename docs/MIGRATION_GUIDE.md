@@ -151,6 +151,82 @@ embeddingのAPIもKotlinから自然に使える。既存コードがまだJava�
 | CocoaPods（`podhelper.rb` を `Podfile` から読み込み） | 既にCocoaPodsを使っているプロジェクト。公式のPodfileサンプルにひと手間（`post_install` フックの追加）加えるだけで組み込める |
 | 手動フレームワーク埋め込み（`Flutter.xcframework` / `App.xcframework` を直接追加） | CocoaPods非採用のプロジェクト。管理は煩雑になるがCocoaPods導入を強制しない |
 
+### CocoaPods統合の仕組み
+
+Androidのsource moduleと同じ立ち位置の方式。ホストアプリ側で書くのは
+`Podfile` だけで、そこから読み込む `podhelper.rb`（Flutterモジュールの
+`.ios/` 以下に生成される、バージョン管理対象外のファイル）が
+Pod・ビルド設定・ビルドフェーズをまとめて注入する。
+
+```mermaid
+flowchart LR
+    subgraph HOST["ホストアプリ（手で書くのはPodfileだけ）"]
+        PF["Podfile<br/>install_all_flutter_pods<br/>+ flutter_post_install"]
+    end
+
+    subgraph MOD["Flutterモジュール"]
+        LIB["lib/*.dart<br/>pubspec.yaml"]
+        PH[".ios/Flutter/podhelper.rb<br/>（生成物・gitignore対象）"]
+        SYM[".ios/.symlinks/plugins/<br/>各プラグインの実ソースへのリンク"]
+    end
+
+    subgraph PODS["CocoaPodsが展開するPod"]
+        FE["'Flutter'<br/>（エンジン本体）"]
+        FPR["'FlutterPluginRegistrant'<br/>（生成されるプラグイン登録コード）"]
+        PP["各プラグインのPod"]
+    end
+
+    subgraph XC["CocoaPodsが書き込む先"]
+        PBX[".xcodeproj<br/>2つのビルドフェーズを注入"]
+        WS[".xcworkspace<br/>（生成される。ビルドは必ずこちら）"]
+    end
+
+    PF -->|"load"| PH
+    PH -->|"install_all_flutter_pods"| FE
+    PH --> FPR
+    PH --> PP
+    PP -.->|"実体はここ"| SYM
+    PH -->|"flutter_post_install"| PBX
+    PBX --- WS
+    FE -.->|"ビルド時にコンパイル"| LIB
+```
+
+Androidと同じく、**1つのホストアプリに組み込めるFlutterモジュールは1つだけ**
+という制約がここにも現れる。ただし理由は異なり、Androidがサブプロジェクト名
+`:flutter` のハードコードだったのに対し、iOSは **Pod名 `Flutter` /
+`FlutterPluginRegistrant` が固定**であることによる名前衝突が原因である。
+モジュールのディレクトリ名やDartのパッケージ名を変えても、これらのPod名は
+変わらない。
+
+またiOSにはAndroidにない `.xcworkspace` という層が入る。CocoaPodsは
+Pod側のプロジェクトとホストアプリのプロジェクトをworkspaceで束ねるため、
+`.xcodeproj` を直接開いてビルドするとFlutter関連の依存が解決されない。
+
+### ビルド時に何が起きるか
+
+CocoaPodsは、ホストアプリのターゲットに2つのスクリプトビルドフェーズを
+注入する。Dartのコンパイルはこのうち1つ目のフェーズの中で走るため、
+Androidのsource moduleと同様、**ホストアプリをビルドする全員のマシンに
+Flutter SDKが必要**になる。
+
+```mermaid
+flowchart TB
+    A["xcodebuild / Xcodeでビルド"] --> B["【フェーズ1】Run Flutter Build Script<br/>flutter_export_environment.sh を読み込み<br/>xcode_backend.sh build"]
+    B --> C["Dartをコンパイルして App.framework を生成<br/>Debug: kernel_blob.bin ／ Release: AOTバイナリ"]
+    C --> D["ネイティブソースのコンパイル・リンク"]
+    D --> E["【フェーズ2】Embed Flutter Build Script<br/>xcode_backend.sh embed_and_thin"]
+    E --> F["Flutter.framework と App.framework を .app に埋め込み<br/>対象アーキテクチャに絞る"]
+    F --> G["ホストアプリの .app / .ipa"]
+
+    B -.->|"未インストールならここで失敗"| H["ローカルのFlutter SDK"]
+
+    B -.- I["この2つのフェーズはCocoaPodsの生成物<br/>= プロジェクト再生成で消える"]
+    E -.- I
+```
+
+図の右側にある通り、この2つのビルドフェーズは `pod install` が `.pbxproj` に
+書き込むものである。これが次に述べる併用順序の問題に直結する。
+
 ### ハマりやすい点1: Podfileの記法
 
 `install_all_flutter_pods(flutter_application_path)` を `target` ブロックに
@@ -166,11 +242,15 @@ XcodeGenやTuistなどでプロジェクトファイルを生成管理してい�
 CocoaPodsが `.pbxproj` に注入した統合設定（ビルドフェーズ等）が失われる**。
 以下の順序を毎回徹底すること。
 
-```
-project.yml等を変更
-  -> プロジェクト生成コマンドを再実行 (xcodegen generate 等)
-  -> pod install
-  -> ビルド (.xcworkspace を使う。.xcodeproj 直接ビルドは不可)
+```mermaid
+flowchart LR
+    A["プロジェクト定義ファイルを変更"] --> B["プロジェクト生成コマンドを再実行"]
+    B --> C["pod install"]
+    C --> D["ビルド"]
+
+    B -.->|"ここで統合設定が消える"| X["Flutterのビルドフェーズが失われた .xcodeproj"]
+    C -.->|"ここで復活する"| Y["ビルドフェーズが再注入された .xcodeproj<br/>+ .xcworkspace"]
+    D -.->|"必ず .xcworkspace を使う<br/>.xcodeproj 直接ビルドは不可"| Y
 ```
 
 ### 新規コードの言語
